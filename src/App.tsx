@@ -1,18 +1,29 @@
-import { useState } from 'react';
+import { Route, Routes } from 'react-router-dom';
+import { Banks, Sidebar, Dashboard, ErrorPage } from './modules';
 
-function App() {
-  const [count, setCount] = useState(0);
+const routes = [
+  {
+    title: 'Dashboard',
+    path: '/',
+    element: <Dashboard />,
+  },
+  {
+    title: 'Banks',
+    path: '/banks',
+    element: <Banks />,
+  },
+];
 
+export const App = () => {
   return (
-    <div className="bg-gradient-to-r from-purple-500 to-blue-500 h-screen flex justify-center items-center">
-      <button
-        className="text-white text-4xl py-10 px-20 bg-transparent border border-white rounded hover:bg-white hover:text-purple-500 transition duration-300 ease-in-out transform hover:scale-105 w-11/12 h-5/6"
-        onClick={() => setCount(count + 1)}
-      >
-        Incrementar: {count}
-      </button>
-    </div>
+    <>
+      <Sidebar routes={routes} />
+      <Routes>
+        {routes.map((route) => (
+          <Route key={route.title} path={route.path} element={route.element} />
+        ))}
+        <Route path="*" element={<ErrorPage />} />
+      </Routes>
+    </>
   );
-}
-
-export default App;
+};
