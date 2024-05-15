@@ -1,21 +1,24 @@
 import axios from 'axios';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { IBank } from '../types';
-import { IResponseAxios } from '../../core';
+import { IResponseAxios, LoadingContext } from '../../core';
 
 const url = `${import.meta.env.VITE_API_SERVER_URL}bank`;
 
 export const Banks = () => {
   const [banks, setBanks] = useState<IBank[]>([]);
-
-  const fetchBanks = async () => {
-    const response = await axios.get<IResponseAxios>(url);
-    setBanks(response.data.data.rows || []);
-  };
+  const { setIsLoading } = useContext(LoadingContext);
 
   useEffect(() => {
+    const fetchBanks = async () => {
+      setIsLoading(true);
+      const response = await axios.get<IResponseAxios>(url);
+      setBanks(response.data.data.rows || []);
+      setIsLoading(false);
+    };
+
     fetchBanks();
-  }, []);
+  }, [setIsLoading]);
 
   return (
     <>

@@ -4,11 +4,14 @@ import './index.css';
 
 import { ThemeProvider } from '@material-tailwind/react';
 import { BrowserRouter } from 'react-router-dom';
+import { LoadingProvider } from './modules/core/providers';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
-  <BrowserRouter>
-    <ThemeProvider>
-      <App />
-    </ThemeProvider>
-  </BrowserRouter>,
+  <LoadingProvider>
+    <BrowserRouter>
+      <ThemeProvider>
+        <App />
+      </ThemeProvider>
+    </BrowserRouter>
+  </LoadingProvider>,
 );
