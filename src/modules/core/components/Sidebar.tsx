@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import {
   IconButton,
   Typography,
@@ -13,24 +12,23 @@ import { SidebarItem } from './SidebarItem';
 
 export const Sidebar = ({
   routes,
+  isOpen,
+  onToggle,
 }: {
   routes: { title: string; path: string }[];
+  isOpen: boolean;
+  onToggle: () => void;
 }) => {
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-
-  const openDrawer = () => setIsDrawerOpen(true);
-  const closeDrawer = () => setIsDrawerOpen(false);
-
   return (
     <>
-      <IconButton variant="text" size="lg" onClick={openDrawer}>
-        {isDrawerOpen ? (
+      <IconButton variant="text" size="lg" onClick={onToggle}>
+        {isOpen ? (
           <XMarkIcon className="h-8 w-8 stroke-2" />
         ) : (
           <Bars3Icon className="h-8 w-8 stroke-2" />
         )}
       </IconButton>
-      <Drawer open={isDrawerOpen} onClose={closeDrawer}>
+      <Drawer open={isOpen} onClose={onToggle}>
         <Card
           color="transparent"
           shadow={false}
@@ -53,6 +51,7 @@ export const Sidebar = ({
                 key={route.title}
                 title={route.title}
                 path={route.path}
+                onToggle={onToggle}
               />
             ))}
           </List>

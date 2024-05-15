@@ -9,6 +9,7 @@ import { Link } from 'react-router-dom';
 interface SidebarItemProps {
   title: string;
   path: string;
+  onToggle?: () => void;
 }
 
 interface IconMap {
@@ -21,11 +22,15 @@ const iconMap = {
   '/ecommerce': <ShoppingCartIcon className="h-5 w-5" />,
 } as IconMap;
 
-export const SidebarItem = ({ title, path }: Readonly<SidebarItemProps>) => {
+export const SidebarItem = ({
+  title,
+  path,
+  onToggle,
+}: Readonly<SidebarItemProps>) => {
   const icon = iconMap[path];
 
   return (
-    <Link to={path}>
+    <Link to={path} onClick={onToggle}>
       <ListItem>
         <ListItemPrefix>{icon}</ListItemPrefix>
         {title}

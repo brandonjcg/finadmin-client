@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useState, useContext } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import { Spinner } from '@material-tailwind/react';
 import {
@@ -24,6 +24,7 @@ const routes = [
 
 export const App = () => {
   const { isLoading } = useContext(LoadingContext);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   return (
     <div className="relative h-screen">
@@ -32,7 +33,11 @@ export const App = () => {
           <Spinner className="h-12 w-12 text-white" />
         </div>
       )}
-      <Sidebar routes={routes} />
+      <Sidebar
+        routes={routes}
+        isOpen={isDrawerOpen}
+        onToggle={() => setIsDrawerOpen(!isDrawerOpen)}
+      />
       <Routes>
         {routes.map((route) => (
           <Route key={route.title} path={route.path} element={route.element} />

@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { useContext, useEffect, useState } from 'react';
+import { IResponseAxios, LoadingContext } from '@/modules';
 import { IBank } from '../types';
-import { IResponseAxios, LoadingContext } from '../../core';
 
 const url = `${import.meta.env.VITE_API_SERVER_URL}bank`;
 
