@@ -7,6 +7,7 @@ import {
   Dashboard,
   ErrorPage,
   LoadingContext,
+  Transactions,
 } from './modules';
 
 const routes = [
@@ -14,6 +15,11 @@ const routes = [
     title: 'Dashboard',
     path: '/',
     element: <Dashboard />,
+  },
+  {
+    title: 'Transactions',
+    path: '/transactions',
+    element: <Transactions />,
   },
   {
     title: 'Banks',

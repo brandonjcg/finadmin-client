@@ -12,7 +12,7 @@ export const Banks = () => {
   useEffect(() => {
     const fetchBanks = async () => {
       setIsLoading(true);
-      const response = await axios.get<IResponseAxios>(url);
+      const response = await axios.get<IResponseAxios<IBank>>(url);
       setBanks(response.data.data.rows || []);
       setIsLoading(false);
     };

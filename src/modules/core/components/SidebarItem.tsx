@@ -1,7 +1,7 @@
 import {
   BanknotesIcon,
+  CircleStackIcon,
   HomeIcon,
-  ShoppingCartIcon,
 } from '@heroicons/react/24/outline';
 import { ListItem, ListItemPrefix } from '@material-tailwind/react';
 import { Link } from 'react-router-dom';
@@ -19,7 +19,7 @@ interface IconMap {
 const iconMap = {
   '/': <HomeIcon className="h-5 w-5" />,
   '/banks': <BanknotesIcon className="h-5 w-5" />,
-  '/ecommerce': <ShoppingCartIcon className="h-5 w-5" />,
+  '/transactions': <CircleStackIcon className="h-5 w-5" />,
 } as IconMap;
 
 export const SidebarItem = ({

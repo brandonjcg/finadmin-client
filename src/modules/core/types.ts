@@ -1,22 +1,20 @@
-import { IBank } from '../banks';
-
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type TODO = any;
 
-export interface IResponseAxios {
+export interface IResponseAxios<T> {
   error: boolean;
   statusCode: number;
   path: string;
   message: string;
-  data: IResponseServer;
+  data: IResponseServer<T>;
 }
 
-export interface IResponseServer {
+export interface IResponseServer<T> {
   page: number;
   limit: number;
   total: number;
   totalPages: number;
   sort: string;
   order: string;
-  rows: IBank[];
+  rows: T[];
 }
