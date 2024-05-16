@@ -29,7 +29,7 @@
     "package.json",
     "tsconfig.json",
     "test/**/*",
-    "commitlint.config.ts"
+    ".eslintrc.cjs",
   ],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
