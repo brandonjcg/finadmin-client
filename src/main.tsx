@@ -6,6 +6,7 @@ import { ThemeProvider } from '@material-tailwind/react';
 import { BrowserRouter } from 'react-router-dom';
 import { LoadingProvider } from './modules/core/providers';
 
+console.log('Hello, World!');
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <LoadingProvider>
     <BrowserRouter>
