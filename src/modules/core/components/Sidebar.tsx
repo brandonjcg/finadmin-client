@@ -15,7 +15,10 @@ export const Sidebar = ({
   isOpen,
   onToggle,
 }: {
-  routes: { title: string; path: string }[];
+  routes: {
+    title: string;
+    path: string;
+  }[];
   isOpen: boolean;
   onToggle: () => void;
 }) => {
