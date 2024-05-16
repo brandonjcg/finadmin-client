@@ -1,10 +1,17 @@
 import ReactDOM from 'react-dom/client';
-import App from './App.tsx';
+import { App } from './App';
 import './index.css';
 
-ReactDOM.createRoot(document.getElementById('root')!).render(<App />);
+import { ThemeProvider } from '@material-tailwind/react';
+import { BrowserRouter } from 'react-router-dom';
+import { LoadingProvider } from './modules/core/providers';
 
-// TODO: implements dynamic routing
-// TODO: implements fetch data from server
-// TODO: replace icons
-// TODO: responsive design (sidebar, header, footer)
+ReactDOM.createRoot(document.getElementById('root')!).render(
+  <LoadingProvider>
+    <BrowserRouter>
+      <ThemeProvider>
+        <App />
+      </ThemeProvider>
+    </BrowserRouter>
+  </LoadingProvider>,
+);

@@ -1,44 +1,55 @@
-import { Sidebar } from './modules';
+import { useState, useContext } from 'react';
+import { Route, Routes } from 'react-router-dom';
+import { Spinner } from '@material-tailwind/react';
+import {
+  Banks,
+  Sidebar,
+  Dashboard,
+  ErrorPage,
+  LoadingContext,
+  Transactions,
+} from './modules';
 
-const App = () => {
+const routes = [
+  {
+    title: 'Dashboard',
+    path: '/',
+    element: <Dashboard />,
+  },
+  {
+    title: 'Transactions',
+    path: '/transactions',
+    element: <Transactions />,
+  },
+  {
+    title: 'Banks',
+    path: '/banks',
+    element: <Banks />,
+  },
+];
+
+export const App = () => {
+  const { isLoading } = useContext(LoadingContext);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+
   return (
-    <div className="flex flex-1 bg-gray-50">
-      <Sidebar />
-      <div className="flex flex-col flex-1 bg-gray-500">
-        <main>
-          <div className="py-6">
-            <div className="px-4 mx-auto max-w-7xl sm:px-6 md:px-8">
-              <section className="py-10 bg-gray-50 sm:py-16 lg:py-24">
-                <div className="px-4 mx-auto sm:px-6 lg:px-8 max-w-7xl">
-                  <div className="max-w-2xl mx-auto text-center">
-                    <h2 className="text-3xl font-bold leading-tight text-black sm:text-4xl lg:text-5xl">
-                      FinAdmin 👨🏽‍💻🚀
-                    </h2>
-                    <h3 className="text-xl font-semibold text-gray-600 sm:text-2xl lg:text-3xl">
-                      Developed by Brandon Castillo
-                    </h3>
-                    <p className="max-w-xl mx-auto mt-4 text-base leading-relaxed text-gray-600">
-                      Sistema para administrar finanzas personales
-                    </p>
-                  </div>
-
-                  <p className="text-center text-gray-600 textbase mt-9">
-                    Developed by{' '}
-                    <a
-                      href="https://github.com/brandonjcg/"
-                      title=""
-                      className="font-medium text-blue-600 transition-all duration-200 hover:text-blue-700 focus:text-blue-700 hover:underline"
-                    >
-                      Brandon Castillo
-                    </a>
-                  </p>
-                </div>
-              </section>
-            </div>
-          </div>
-        </main>
-      </div>
+    <div className="relative h-screen">
+      {isLoading && (
+        <div className="absolute top-0 left-0 flex items-center justify-center w-full h-full bg-black bg-opacity-5 z-50">
+          <Spinner className="h-12 w-12 text-white" />
+        </div>
+      )}
+      <Sidebar
+        routes={routes}
+        isOpen={isDrawerOpen}
+        onToggle={() => setIsDrawerOpen(!isDrawerOpen)}
+      />
+      <Routes>
+        {routes.map((route) => (
+          <Route key={route.title} path={route.path} element={route.element} />
+        ))}
+        <Route path="*" element={<ErrorPage />} />
+      </Routes>
     </div>
   );
 };
-export default App;
