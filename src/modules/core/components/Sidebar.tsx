@@ -18,6 +18,7 @@ export const Sidebar = ({
   routes: {
     title: string;
     path: string;
+    visible?: boolean;
   }[];
   isOpen: boolean;
   onToggle: () => void;
@@ -49,14 +50,17 @@ export const Sidebar = ({
           </div>
           <List>
             <hr className="my-2 border-blue-gray-50" />
-            {routes.map((route) => (
-              <SidebarItem
-                key={route.title}
-                title={route.title}
-                path={route.path}
-                onToggle={onToggle}
-              />
-            ))}
+            {routes.map(
+              (route) =>
+                route.visible === true && (
+                  <SidebarItem
+                    key={route.title}
+                    title={route.title}
+                    path={route.path}
+                    onToggle={onToggle}
+                  />
+                ),
+            )}
           </List>
         </Card>
       </Drawer>

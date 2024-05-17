@@ -18,3 +18,8 @@ export interface IResponseServer<T> {
   order: string;
   rows: T[];
 }
+
+export interface ISelectOption {
+  _id: string;
+  text: string;
+}
