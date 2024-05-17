@@ -8,6 +8,7 @@ import {
   ErrorPage,
   LoadingContext,
   Transactions,
+  TransactionForm,
 } from './modules';
 
 const routes = [
@@ -15,16 +16,25 @@ const routes = [
     title: 'Dashboard',
     path: '/',
     element: <Dashboard />,
+    visible: true,
   },
   {
     title: 'Transactions',
     path: '/transactions',
     element: <Transactions />,
+    visible: true,
   },
   {
     title: 'Banks',
     path: '/banks',
     element: <Banks />,
+    visible: true,
+  },
+  {
+    title: 'Create Transaction',
+    path: '/transactions/create',
+    element: <TransactionForm />,
+    visible: false,
   },
 ];
 

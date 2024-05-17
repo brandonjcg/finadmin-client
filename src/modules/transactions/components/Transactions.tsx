@@ -1,8 +1,6 @@
 import { useContext, useEffect, useState } from 'react';
-import {
-  ArrowDownTrayIcon,
-  MagnifyingGlassIcon,
-} from '@heroicons/react/24/outline';
+import { Link } from 'react-router-dom';
+import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 import {
   Card,
   CardHeader,
@@ -64,7 +62,7 @@ export const Transactions = () => {
               />
             </div>
             <Button className="flex items-center gap-3" size="sm">
-              <ArrowDownTrayIcon strokeWidth={2} className="h-4 w-4" /> Download
+              <Link to="/transactions/create">Create</Link>
             </Button>
           </div>
         </div>
