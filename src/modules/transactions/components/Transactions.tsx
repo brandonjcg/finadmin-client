@@ -1,216 +1,119 @@
 import { useContext, useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
-import {
-  Card,
-  CardHeader,
-  Typography,
-  Button,
-  CardBody,
-  Chip,
-  CardFooter,
-  Avatar,
-  IconButton,
-  Input,
-} from '@material-tailwind/react';
-import { IResponseAxios, LoadingContext } from '@/modules';
-import { ITransaction } from '../types';
 import axios from 'axios';
+import { DataGrid, GridColDef, GridPaginationModel } from '@mui/x-data-grid';
+import { ITransaction } from '../types';
+import { IResponseAxios, LoadingContext } from '@/modules';
 
 const url = `${import.meta.env.VITE_API_SERVER_URL}transaction`;
 
-const tableHead = [
-  'Bank',
-  'Concept',
-  'Store',
-  'Date',
-  'Amount',
-  'Is reserved?',
-  'Is paid?',
+const columns: GridColDef[] = [
+  {
+    field: 'bankName',
+    headerName: 'Bank',
+    width: 130,
+    valueGetter: (_, row) => row.bank?.name ?? '',
+  },
+  { field: 'store', headerName: 'Store', width: 130 },
+  { field: 'concept', headerName: 'Concept', width: 130 },
+  {
+    field: 'date',
+    headerName: 'Date',
+    width: 90,
+  },
+  {
+    field: 'amount',
+    headerName: 'Amount',
+    description: 'This column has a value getter and is not sortable.',
+    sortable: false,
+    width: 160,
+    valueGetter: (_, row) => `${row.amount || ''} ${row.amount || ''}`,
+  },
+  {
+    field: 'isReserved',
+    headerName: 'Is reserved?',
+    type: 'boolean',
+    width: 130,
+  },
+  {
+    field: 'isPaid',
+    headerName: 'Is paid?',
+    width: 130,
+    type: 'boolean',
+  },
+  {
+    field: 'additionalComments',
+    headerName: 'Additional comments',
+    width: 200,
+  },
 ];
+
+// TODO: pagination pending
 
 export const Transactions = () => {
   const [rows, setRows] = useState<ITransaction[]>([]);
+  const [pagination, setPagination] = useState({
+    page: 0,
+    pageSize: 10,
+    total: 0,
+  });
   const { setIsLoading } = useContext(LoadingContext);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setIsLoading(true);
-      const response = await axios.get<IResponseAxios<ITransaction>>(url);
-      setRows(response.data.data.rows || []);
+  const fetchData = async (page: number, pageSize: number) => {
+    setIsLoading(true);
+    try {
+      const response = await axios.get<IResponseAxios<ITransaction>>(url, {
+        params: { page: page + 1, limit: pageSize }, // Adjusted for 1-based indexing
+      });
+      const data = response.data.data;
+      setRows(data.rows || []);
+      setPagination({
+        page: data.page - 1,
+        pageSize: data.limit,
+        total: data.total,
+      });
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    } finally {
       setIsLoading(false);
-    };
+    }
+  };
 
-    fetchData();
-  }, [setIsLoading]);
+  useEffect(() => {
+    fetchData(pagination.page, pagination.pageSize);
+  }, []);
+
+  const handlePageChange = (newPage: number) => {
+    fetchData(newPage, pagination.pageSize);
+    setPagination((prev) => ({ ...prev, page: newPage }));
+  };
+
+  const handlePageSizeChange = (newPageSize: number) => {
+    fetchData(0, newPageSize);
+    setPagination({ page: 0, pageSize: newPageSize, total: pagination.total });
+  };
 
   return (
-    <Card className="h-full w-full">
-      <CardHeader floated={false} shadow={false} className="rounded-none">
-        <div className="mb-4 flex flex-col justify-between gap-8 md:flex-row md:items-center">
-          <div>
-            <Typography variant="h5" color="blue-gray">
-              Transactions
-            </Typography>
-          </div>
-          <div className="flex w-full shrink-0 gap-2 md:w-max">
-            <div className="w-full md:w-72">
-              <Input
-                label="Search"
-                icon={<MagnifyingGlassIcon className="h-5 w-5" />}
-                crossOrigin={undefined}
-              />
-            </div>
-            <Button className="flex items-center gap-3" size="sm">
-              <Link to="/transactions/create">Create</Link>
-            </Button>
-          </div>
-        </div>
-      </CardHeader>
-      <CardBody className="overflow-scroll px-0">
-        <table className="w-full min-w-max table-auto text-left">
-          <thead>
-            <tr>
-              {tableHead.map((head) => (
-                <th
-                  key={head}
-                  className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4"
-                >
-                  <Typography
-                    variant="small"
-                    color="blue-gray"
-                    className="font-normal leading-none opacity-70"
-                  >
-                    {head}
-                  </Typography>
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {rows.map(
-              (
-                { _id, bank, store, amount, date, concept, isReserved, isPaid },
-                index,
-              ) => {
-                const isLast = index === rows.length - 1;
-                const classes = isLast
-                  ? 'p-4'
-                  : 'p-4 border-b border-blue-gray-50';
-
-                return (
-                  <tr key={_id}>
-                    <td className={classes}>
-                      <div className="flex items-center gap-3">
-                        <Avatar
-                          src={bank.logo}
-                          alt={bank.name}
-                          size="md"
-                          className="border border-blue-gray-50 bg-blue-gray-50/50 object-contain p-1"
-                        />
-                        <Typography
-                          variant="small"
-                          color="blue-gray"
-                          className="font-bold"
-                        >
-                          {bank.name}
-                        </Typography>
-                      </div>
-                    </td>
-                    <td className={classes}>
-                      <Typography
-                        variant="small"
-                        color="blue-gray"
-                        className="font-normal"
-                      >
-                        ${amount}
-                      </Typography>
-                    </td>
-                    <td className={classes}>
-                      <Typography
-                        variant="small"
-                        color="blue-gray"
-                        className="font-normal"
-                      >
-                        {store}
-                      </Typography>
-                    </td>
-                    <td className={classes}>
-                      <Typography
-                        variant="small"
-                        color="blue-gray"
-                        className="font-normal"
-                      >
-                        {date}
-                      </Typography>
-                    </td>
-                    <td className={classes}>
-                      <Typography
-                        variant="small"
-                        color="blue-gray"
-                        className="font-normal"
-                      >
-                        {concept}
-                      </Typography>
-                    </td>
-                    <td className={classes}>
-                      <div className="w-max">
-                        <Chip
-                          size="sm"
-                          variant="ghost"
-                          value={isReserved ? 'Reserved' : 'Not reserved'}
-                          color={isReserved === true ? 'green' : 'red'}
-                        />
-                      </div>
-                    </td>
-                    <td className={classes}>
-                      <div className="w-max">
-                        <Chip
-                          size="sm"
-                          variant="ghost"
-                          value={isPaid ? 'Paid' : 'Not paid'}
-                          color={isPaid === true ? 'green' : 'red'}
-                        />
-                      </div>
-                    </td>
-                  </tr>
-                );
-              },
-            )}
-          </tbody>
-        </table>
-      </CardBody>
-      <CardFooter className="flex items-center justify-between border-t border-blue-gray-50 p-4">
-        <Button variant="outlined" size="sm">
-          Previous
-        </Button>
-        <div className="flex items-center gap-2">
-          <IconButton variant="outlined" size="sm">
-            1
-          </IconButton>
-          <IconButton variant="text" size="sm">
-            2
-          </IconButton>
-          <IconButton variant="text" size="sm">
-            3
-          </IconButton>
-          <IconButton variant="text" size="sm">
-            ...
-          </IconButton>
-          <IconButton variant="text" size="sm">
-            8
-          </IconButton>
-          <IconButton variant="text" size="sm">
-            9
-          </IconButton>
-          <IconButton variant="text" size="sm">
-            10
-          </IconButton>
-        </div>
-        <Button variant="outlined" size="sm">
-          Next
-        </Button>
-      </CardFooter>
-    </Card>
+    <DataGrid
+      getRowId={({ _id }) => _id}
+      rows={rows}
+      columns={columns}
+      paginationMode="server"
+      rowCount={pagination.total}
+      pageSizeOptions={[10]}
+      paginationModel={{
+        page: pagination.page,
+        pageSize: pagination.pageSize,
+      }}
+      onPaginationModelChange={(model: GridPaginationModel) => {
+        if (model.page !== pagination.page) {
+          handlePageChange(model.page);
+        }
+        if (model.pageSize !== pagination.pageSize) {
+          handlePageSizeChange(model.pageSize);
+        }
+      }}
+      checkboxSelection
+      autoHeight
+    />
   );
 };
