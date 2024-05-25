@@ -1,15 +1,10 @@
 import { useCallback, useContext, useEffect, useState } from 'react';
-import axios, { AxiosError } from 'axios';
+import axios from 'axios';
 import { LoadingContext, ToastContext } from '../context';
 import { IResponseAxios } from '../types';
+import { buildError } from '../utils';
 
 const URL_API_SERVER = `${import.meta.env.VITE_API_SERVER_URL}`;
-
-const buildError = <T,>(error: Error | unknown) => {
-  const data = error as AxiosError<IResponseAxios<T>>;
-  const message = data.response?.data.message;
-  return message ?? 'Error fetching data';
-};
 
 export const useFetchData = <T,>(
   url: string,

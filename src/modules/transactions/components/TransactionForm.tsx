@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import {
@@ -10,7 +10,13 @@ import {
   Select,
   Option,
 } from '@material-tailwind/react';
-import { ISelectOption, LoadingContext } from '@/modules';
+import {
+  ISelectOption,
+  LoadingContext,
+  ToastContext,
+  buildError,
+  useFetchData,
+} from '@/modules';
 
 // TODO: Create components: select, input
 
@@ -18,39 +24,21 @@ const url = `${import.meta.env.VITE_API_SERVER_URL}`;
 
 export const TransactionForm = () => {
   const { setIsLoading } = useContext(LoadingContext);
-  const [banks, setBanks] = useState<ISelectOption[]>([]);
-  const [stores, setStores] = useState<ISelectOption[]>([]);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const fetchData = async () => {
-      setIsLoading(true);
-      try {
-        const [banksResponse, storesResponse] = await Promise.all([
-          axios.get(`${url}bank/select`),
-          axios.get(`${url}transaction/store/select`),
-        ]);
-
-        setBanks(banksResponse.data.data || []);
-        setStores(storesResponse.data.data || []);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [setIsLoading]);
-
   const [bank, setBank] = useState('');
   const [store, setStore] = useState('');
+
+  const { rows: banks } = useFetchData<ISelectOption>('bank/select');
+  const { rows: stores } = useFetchData<ISelectOption>(
+    'transaction/store/select',
+  );
+
+  const { showToast } = useContext(ToastContext);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     try {
       e.preventDefault();
       const data = new FormData(e.currentTarget);
-      console.log('🚀 ~ handleSubmit ~ data:', data);
       const payload = {
         bank,
         concept: data.get('concept'),
@@ -67,7 +55,7 @@ export const TransactionForm = () => {
 
       navigate('/transactions');
     } catch (error) {
-      console.error('Error creating transaction:', error);
+      showToast(buildError(error), 'error');
     } finally {
       setIsLoading(false);
     }
