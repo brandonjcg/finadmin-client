@@ -1,6 +1,11 @@
-import { DataGrid, GridColDef, GridPaginationModel } from '@mui/x-data-grid';
+import {
+  DataGrid,
+  GridColDef,
+  GridPaginationModel,
+  GridRowParams,
+} from '@mui/x-data-grid';
 import { useState } from 'react';
-import { useFetchData } from '../hooks';
+import { useFetchById, useFetchData } from '../hooks';
 
 interface ITableProps {
   columns: GridColDef[];
@@ -26,6 +31,13 @@ export const Table = <T,>({ url, columns }: ITableProps) => {
     pagination.pageSize,
   );
 
+  const fetchById = useFetchById<T>(url);
+
+  const handleRowClick = async (params: GridRowParams) => {
+    const row = await fetchById(params.row._id);
+    console.log('🚀 ~ handleRowClick ~ row:', row);
+  };
+
   return (
     <DataGrid
       getRowId={({ _id }) => _id}
@@ -50,6 +62,7 @@ export const Table = <T,>({ url, columns }: ITableProps) => {
       }}
       checkboxSelection
       autoHeight
+      onRowClick={handleRowClick}
     />
   );
 };

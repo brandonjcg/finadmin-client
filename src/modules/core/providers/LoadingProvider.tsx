@@ -1,8 +1,11 @@
 import { useState, useMemo } from 'react';
 import { LoadingContext } from '../context';
-import { TODO } from '../types';
 
-export const LoadingProvider = ({ children }: TODO) => {
+interface LoadingProviderProps {
+  children: React.ReactNode;
+}
+
+export const LoadingProvider = ({ children }: LoadingProviderProps) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const contextValue = useMemo(
