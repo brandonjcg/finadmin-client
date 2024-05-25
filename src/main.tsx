@@ -15,3 +15,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     </BrowserRouter>
   </LoadingProvider>,
 );
+
+// TODO: add unit test
+// TODO: try create select with input text component
+// TODO: add functionality to order and filters

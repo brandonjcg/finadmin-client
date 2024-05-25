@@ -23,3 +23,7 @@ export interface ISelectOption {
   _id: string;
   text: string;
 }
+
+export interface LoadingProviderProps {
+  children: React.ReactNode;
+}
