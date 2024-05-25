@@ -1,24 +1,8 @@
-import axios from 'axios';
-import { useContext, useEffect, useState } from 'react';
-import { IResponseAxios, LoadingContext } from '@/modules';
+import { useFetchData } from '@/modules/core';
 import { IBank } from '../types';
 
-const url = `${import.meta.env.VITE_API_SERVER_URL}bank`;
-
 export const Banks = () => {
-  const [banks, setBanks] = useState<IBank[]>([]);
-  const { setIsLoading } = useContext(LoadingContext);
-
-  useEffect(() => {
-    const fetchBanks = async () => {
-      setIsLoading(true);
-      const response = await axios.get<IResponseAxios<IBank>>(url);
-      setBanks(response.data.data.rows || []);
-      setIsLoading(false);
-    };
-
-    fetchBanks();
-  }, [setIsLoading]);
+  const { rows: banks } = useFetchData<IBank>('bank/select');
 
   return (
     <>
@@ -26,7 +10,7 @@ export const Banks = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 p-4">
         {banks.map((bank) => (
           <div
-            key={bank.name}
+            key={bank._id}
             className="flex flex-col items-center bg-white rounded-lg border shadow-md p-4"
           >
             <img src={bank.logo} alt={bank.name} className="w-16 h-16" />
