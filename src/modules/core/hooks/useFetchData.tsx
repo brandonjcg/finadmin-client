@@ -1,9 +1,15 @@
 import { useCallback, useContext, useEffect, useState } from 'react';
-import axios from 'axios';
-import { LoadingContext } from '../context';
+import axios, { AxiosError } from 'axios';
+import { LoadingContext, ToastContext } from '../context';
 import { IResponseAxios } from '../types';
 
 const URL_API_SERVER = `${import.meta.env.VITE_API_SERVER_URL}`;
+
+const buildError = <T,>(error: Error | unknown) => {
+  const data = error as AxiosError<IResponseAxios<T>>;
+  const message = data.response?.data.message;
+  return message ?? 'Error fetching data';
+};
 
 export const useFetchData = <T,>(
   url: string,
@@ -11,6 +17,7 @@ export const useFetchData = <T,>(
   pageSize?: number,
 ) => {
   const { setIsLoading } = useContext(LoadingContext);
+  const { showToast } = useContext(ToastContext);
 
   const [data, setData] = useState<{
     rows: T[];
@@ -48,12 +55,11 @@ export const useFetchData = <T,>(
         pageSize: responseData.limit,
       });
     } catch (error) {
-      // TODO: Implement toast notification error
-      console.error('Error fetching data:', error);
+      showToast(buildError(error), 'error');
     } finally {
       setIsLoading(false);
     }
-  }, [url, page, pageSize, setIsLoading]);
+  }, [setIsLoading, page, pageSize, url, showToast]);
 
   useEffect(() => {
     fetchData();
@@ -64,6 +70,7 @@ export const useFetchData = <T,>(
 
 export const useFetchById = <T,>(url: string) => {
   const { setIsLoading } = useContext(LoadingContext);
+  const { showToast } = useContext(ToastContext);
 
   const fetchById = useCallback(
     async (id: string) => {
@@ -76,13 +83,12 @@ export const useFetchById = <T,>(url: string) => {
 
         return data;
       } catch (error) {
-        // TODO: Implement toast notification error
-        console.error('Error fetching data:', error);
+        showToast(buildError(error), 'error');
       } finally {
         setIsLoading(false);
       }
     },
-    [url, setIsLoading],
+    [setIsLoading, url, showToast],
   );
 
   return fetchById;

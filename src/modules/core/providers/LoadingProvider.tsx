@@ -1,9 +1,6 @@
 import { useState, useMemo } from 'react';
 import { LoadingContext } from '../context';
-
-interface LoadingProviderProps {
-  children: React.ReactNode;
-}
+import { LoadingProviderProps } from '../types';
 
 export const LoadingProvider = ({ children }: LoadingProviderProps) => {
   const [isLoading, setIsLoading] = useState(false);

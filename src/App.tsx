@@ -9,6 +9,7 @@ import {
   LoadingContext,
   Transactions,
   TransactionForm,
+  ToastProvider,
 } from './modules';
 
 const routes = [
@@ -43,23 +44,29 @@ export const App = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   return (
-    <div className="relative h-screen">
-      {isLoading && (
-        <div className="absolute top-0 left-0 flex items-center justify-center w-full h-full bg-black bg-opacity-5 z-50">
-          <Spinner className="h-12 w-12 text-white" />
-        </div>
-      )}
-      <Sidebar
-        routes={routes}
-        isOpen={isDrawerOpen}
-        onToggle={() => setIsDrawerOpen(!isDrawerOpen)}
-      />
-      <Routes>
-        {routes.map((route) => (
-          <Route key={route.title} path={route.path} element={route.element} />
-        ))}
-        <Route path="*" element={<ErrorPage />} />
-      </Routes>
-    </div>
+    <ToastProvider>
+      <div className="relative h-screen">
+        {isLoading && (
+          <div className="absolute top-0 left-0 flex items-center justify-center w-full h-full bg-black bg-opacity-5 z-50">
+            <Spinner className="h-12 w-12 text-white" />
+          </div>
+        )}
+        <Sidebar
+          routes={routes}
+          isOpen={isDrawerOpen}
+          onToggle={() => setIsDrawerOpen(!isDrawerOpen)}
+        />
+        <Routes>
+          {routes.map((route) => (
+            <Route
+              key={route.title}
+              path={route.path}
+              element={route.element}
+            />
+          ))}
+          <Route path="*" element={<ErrorPage />} />
+        </Routes>
+      </div>
+    </ToastProvider>
   );
 };
