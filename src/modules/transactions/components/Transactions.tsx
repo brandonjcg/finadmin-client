@@ -43,5 +43,5 @@ const columns: GridColDef[] = [
 ];
 
 export const Transactions = () => {
-  return <Table url="transaction" columns={columns} />;
+  return <Table url="transaction" columns={columns} title="Transactions" />;
 };

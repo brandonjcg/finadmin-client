@@ -6,8 +6,10 @@ import {
 } from '@mui/x-data-grid';
 import { useState } from 'react';
 import { useFetchById, useFetchData } from '../hooks';
+import { TableHeader } from './TableHeader';
 
 interface ITableProps {
+  title: string;
   columns: GridColDef[];
   url: string;
 }
@@ -18,12 +20,16 @@ interface IPaginationState {
   total: number;
 }
 
-export const Table = <T,>({ url, columns }: ITableProps) => {
-  const [pagination, setPagination] = useState<IPaginationState>({
-    page: 0,
-    pageSize: 10,
-    total: 0,
-  });
+const initialPaginationState: IPaginationState = {
+  page: 0,
+  pageSize: 10,
+  total: 0,
+};
+
+export const Table = <T,>({ title, url, columns }: ITableProps) => {
+  const [pagination, setPagination] = useState<IPaginationState>(
+    initialPaginationState,
+  );
 
   const { rows, total } = useFetchData<T>(
     url,
@@ -37,6 +43,8 @@ export const Table = <T,>({ url, columns }: ITableProps) => {
     const row = await fetchById(params.row._id);
     console.log('🚀 ~ handleRowClick ~ row:', row);
   };
+
+  const toolbar = () => <TableHeader title={title} />;
 
   return (
     <DataGrid
@@ -63,6 +71,9 @@ export const Table = <T,>({ url, columns }: ITableProps) => {
       checkboxSelection
       autoHeight
       onRowClick={handleRowClick}
+      slots={{
+        toolbar,
+      }}
     />
   );
 };
