@@ -2,7 +2,7 @@ import { useFetchData } from '@/modules/core';
 import { IBank } from '../types';
 
 export const Banks = () => {
-  const { rows: banks } = useFetchData<IBank>('bank/select');
+  const { data: banks } = useFetchData<IBank>('bank/select');
 
   return (
     <>
