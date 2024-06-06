@@ -14,3 +14,7 @@ export interface ISelectOption {
   logo: string;
   text: string;
 }
+
+export interface LoadingProviderProps {
+  children: React.ReactNode;
+}
