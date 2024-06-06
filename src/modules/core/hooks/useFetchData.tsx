@@ -15,15 +15,9 @@ export const useFetchData = <T,>(
   const { showToast } = useContext(ToastContext);
 
   const [data, setData] = useState<{
-    rows: T[];
-    total: number;
-    page?: number;
-    pageSize?: number;
+    data: T[];
   }>({
-    rows: [],
-    total: 0,
-    page,
-    pageSize,
+    data: [],
   });
 
   const fetchData = useCallback(async () => {
@@ -44,10 +38,7 @@ export const useFetchData = <T,>(
       );
       const responseData = response.data.data;
       setData({
-        rows: responseData.rows ?? [],
-        total: responseData.total,
-        page: responseData.page - 1,
-        pageSize: responseData.limit,
+        data: responseData ?? [],
       });
     } catch (error) {
       showToast(buildError(error), 'error');
