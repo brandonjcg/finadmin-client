@@ -6,24 +6,11 @@ export interface IResponseAxios<T> {
   statusCode: number;
   path: string;
   message: string;
-  data: IResponseServer<T>;
-}
-
-export interface IResponseServer<T> {
-  page: number;
-  limit: number;
-  total: number;
-  totalPages: number;
-  sort: string;
-  order: string;
-  rows: T[];
+  data: T[];
 }
 
 export interface ISelectOption {
   _id: string;
+  logo: string;
   text: string;
-}
-
-export interface LoadingProviderProps {
-  children: React.ReactNode;
 }
