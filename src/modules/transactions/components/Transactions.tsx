@@ -10,7 +10,7 @@ export const Transactions = () => {
         to="/transactions/create"
         className="mb-4 inline-block bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
       >
-        Add Transaction
+        Add transaction
       </Link>
       <table className="min-w-full divide-y divide-gray-200 dark:bg-gray-800 text-white">
         <thead className="bg-gray-50 dark:bg-gray-700">

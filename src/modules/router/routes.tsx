@@ -8,7 +8,7 @@ export const routes = [
     path: '/',
     element: <Dashboard />,
     description: 'Test',
-    icon: 'fa-solid fa-spell-check',
+    icon: 'fa-solid fa-tachometer',
     hidden: false,
   },
   {
@@ -16,7 +16,7 @@ export const routes = [
     path: '/transactions',
     element: <Transactions />,
     description: 'Test',
-    icon: 'fa-solid fa-spell-check',
+    icon: 'fa-solid fa-receipt',
     hidden: false,
   },
   {
@@ -24,7 +24,7 @@ export const routes = [
     path: '/banks',
     element: <Banks />,
     description: 'Test',
-    icon: 'fa-solid fa-spell-check',
+    icon: 'fa-solid fa-university',
     hidden: false,
   },
   {
