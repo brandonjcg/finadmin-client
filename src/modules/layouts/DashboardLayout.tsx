@@ -3,7 +3,6 @@ import { SidebarMenuItem, TODO } from '../core';
 import { routes } from '../router/routes';
 
 export const DashboardLayout = (): TODO => {
-  console.log('Testing...');
   return (
     <main className="flex flex-row mt-7">
       <nav className="hidden sm:flex flex-col ml-5 w-[370px] min-h-[calc(100vh-3.0rem)] bg-white bg-opacity-10 p-5 rounded-3xl">

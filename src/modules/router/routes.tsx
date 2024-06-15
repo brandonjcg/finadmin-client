@@ -13,7 +13,7 @@ export const routes = [
   },
   {
     title: 'Transactions',
-    path: '/transactions',
+    path: '/transaction',
     element: <Transactions />,
     description: 'Test',
     icon: 'fa-solid fa-receipt',
@@ -29,7 +29,15 @@ export const routes = [
   },
   {
     title: 'Create transaction',
-    path: '/transactions/create',
+    path: '/transaction/create',
+    description: 'Test',
+    element: <TransactionForm />,
+    icon: 'fa-solid fa-credit-card-alt',
+    hidden: true,
+  },
+  {
+    title: 'Edit transaction',
+    path: '/transaction/:id',
     description: 'Test',
     element: <TransactionForm />,
     icon: 'fa-solid fa-credit-card-alt',
