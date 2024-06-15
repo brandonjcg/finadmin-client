@@ -22,7 +22,7 @@ export const TransactionForm = () => {
   const navigate = useNavigate();
   const { id } = useParams() as Params;
   const fetchById = useFetchById<ITransaction>('transaction', id);
-  const { data: banks } = useFetchData<ISelectOption>('bank/select');
+  const { data: banks } = useFetchData<ISelectOption>({ url: 'bank/select' });
 
   const values = fetchById || {
     bank: '',

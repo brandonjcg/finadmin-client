@@ -29,24 +29,21 @@ export const Table = <T,>({ url, columns }: TableProps) => {
     total: 0,
   });
   const [sortModel, setSortModel] = useState<GridSortModel>([
-    {
-      field: 'createdAt',
-      sort: 'desc',
-    },
+    { field: 'createdAt', sort: 'desc' },
   ]);
 
   const handleSortModelChange = (model: GridSortModel) => {
     setSortModel(model);
   };
 
-  const { data, info } = useFetchData<T>(
+  const { data, info } = useFetchData<T>({
     url,
-    pagination.page,
-    pagination.pageSize,
-    sortModel[0]?.field,
-    sortModel[0]?.sort,
-    true,
-  );
+    page: pagination.page,
+    pageSize: pagination.pageSize,
+    sortField: sortModel[0]?.field,
+    sortOrder: sortModel[0]?.sort,
+    pagination: true,
+  });
 
   const navigate = useNavigate();
 

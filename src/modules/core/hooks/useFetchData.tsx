@@ -5,14 +5,23 @@ import { LoadingContext } from '../context';
 
 const URL_API_SERVER = `${import.meta.env.VITE_API_SERVER_URL}`;
 
-export const useFetchData = <T,>(
-  url: string,
-  page?: number,
-  pageSize?: number,
-  sortField?: string | null,
-  sortOrder?: string | null,
+type FetchDataProps = {
+  url: string;
+  page?: number;
+  pageSize?: number;
+  sortField?: string | null;
+  sortOrder?: string | null;
+  pagination?: boolean;
+};
+
+export const useFetchData = <T,>({
+  url,
+  page,
+  pageSize,
+  sortField = 'createdAt',
+  sortOrder = 'DESC',
   pagination = false,
-) => {
+}: FetchDataProps) => {
   const { incrementLoading, decrementLoading } = useContext(LoadingContext);
 
   const [data, setData] = useState<{
@@ -62,12 +71,12 @@ export const useFetchData = <T,>(
     }
     decrementLoading();
   }, [
+    decrementLoading,
     page,
     pageSize,
     sortField,
     sortOrder,
     pagination,
-    decrementLoading,
     incrementLoading,
     url,
   ]);
