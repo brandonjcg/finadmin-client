@@ -1,11 +1,13 @@
 import { createContext } from 'react';
 
 type LoadingContextType = {
-  isLoading: boolean;
-  setIsLoading: (value: boolean) => void;
+  loadingCount: number;
+  incrementLoading: () => void;
+  decrementLoading: () => void;
 };
 
 export const LoadingContext = createContext<LoadingContextType>({
-  isLoading: false,
-  setIsLoading: () => {},
+  loadingCount: 0,
+  incrementLoading: () => {},
+  decrementLoading: () => {},
 });

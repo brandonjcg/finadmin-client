@@ -1,79 +1,84 @@
-// import {
-//   DataGrid,
-//   GridColDef,
-//   GridPaginationModel,
-//   GridRowParams,
-// } from '@mui/x-data-grid';
-// import { useState } from 'react';
-// import { useFetchById, useFetchData } from '../hooks';
-// import { TableHeader } from './TableHeader';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import {
+  DataGrid,
+  GridColDef,
+  GridPaginationModel,
+  GridRowParams,
+  GridSortModel,
+} from '@mui/x-data-grid';
+import { useFetchData } from '../hooks';
+import { IPaginationState } from '../types';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-// interface ITableProps {
-//   title: string;
-//   columns: GridColDef[];
-//   url: string;
-// }
+const darkTheme = createTheme({
+  palette: {
+    mode: 'dark',
+  },
+});
 
-// interface IPaginationState {
-//   page: number;
-//   pageSize: number;
-//   total: number;
-// }
+interface TableProps {
+  columns: GridColDef[];
+  url: string;
+}
 
-// const initialPaginationState: IPaginationState = {
-//   page: 0,
-//   pageSize: 10,
-//   total: 0,
-// };
+export const Table = <T,>({ url, columns }: TableProps) => {
+  const [pagination, setPagination] = useState<IPaginationState>({
+    page: 0,
+    pageSize: 10,
+    total: 0,
+  });
+  const [sortModel, setSortModel] = useState<GridSortModel>([
+    { field: 'createdAt', sort: 'desc' },
+  ]);
 
-// export const Table = <T,>({ title, url, columns }: ITableProps) => {
-//   const [pagination, setPagination] = useState<IPaginationState>(
-//     initialPaginationState,
-//   );
+  const handleSortModelChange = (model: GridSortModel) => {
+    setSortModel(model);
+  };
 
-//   const { rows, total } = useFetchData<T>(
-//     url,
-//     pagination.page,
-//     pagination.pageSize,
-//   );
+  const { data, info } = useFetchData<T>({
+    url,
+    page: pagination.page,
+    pageSize: pagination.pageSize,
+    sortField: sortModel[0]?.field,
+    sortOrder: sortModel[0]?.sort,
+    pagination: true,
+  });
 
-//   const fetchById = useFetchById<T>(url);
+  const navigate = useNavigate();
 
-//   const handleRowClick = async (params: GridRowParams) => {
-//     const row = await fetchById(params.row._id);
-//     console.log('🚀 ~ handleRowClick ~ row:', row);
-//   };
+  const handleRowClick = async (params: GridRowParams) => {
+    navigate(`/${url}/${params.row._id}`);
+  };
 
-//   const toolbar = () => <TableHeader title={title} />;
-
-//   return (
-//     <DataGrid
-//       getRowId={({ _id }) => _id}
-//       rows={rows}
-//       columns={columns}
-//       paginationMode="server"
-//       rowCount={total}
-//       pageSizeOptions={[10]}
-//       paginationModel={{
-//         page: pagination.page,
-//         pageSize: pagination.pageSize,
-//       }}
-//       onPaginationModelChange={(model: GridPaginationModel) => {
-//         if (model.page !== pagination.page)
-//           setPagination((prev) => ({ ...prev, page: model.page }));
-//         if (model.pageSize !== pagination.pageSize)
-//           setPagination({
-//             page: 0,
-//             pageSize: model.pageSize,
-//             total: pagination.total,
-//           });
-//       }}
-//       checkboxSelection
-//       autoHeight
-//       onRowClick={handleRowClick}
-//       slots={{
-//         toolbar,
-//       }}
-//     />
-//   );
-// };
+  return (
+    <ThemeProvider theme={darkTheme}>
+      <DataGrid
+        getRowId={({ _id }) => _id}
+        rows={data}
+        columns={columns}
+        paginationMode="server"
+        rowCount={info.total}
+        pageSizeOptions={[10]}
+        paginationModel={{
+          page: pagination.page,
+          pageSize: pagination.pageSize,
+        }}
+        onPaginationModelChange={(model: GridPaginationModel) => {
+          if (model.page !== pagination.page)
+            setPagination((prev) => ({ ...prev, page: model.page }));
+          if (model.pageSize !== pagination.pageSize)
+            setPagination({
+              page: 0,
+              pageSize: model.pageSize,
+              total: pagination.total,
+            });
+        }}
+        autoHeight
+        onRowClick={handleRowClick}
+        sortModel={sortModel}
+        onSortModelChange={handleSortModelChange}
+      />
+    </ThemeProvider>
+  );
+};
