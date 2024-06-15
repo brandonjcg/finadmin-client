@@ -1,12 +1,8 @@
-import { useContext } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { Formik, Field, Form, FieldProps } from 'formik';
 import {
   ISelectOption,
-  LoadingContext,
-  ToastContext,
-  buildError,
   useFetchData,
   useFetchById,
   ITransaction,
@@ -18,13 +14,15 @@ interface MyFormValues {
   date: string | Date;
 }
 
+type Params = {
+  id: string;
+};
+
 export const TransactionForm = () => {
-  const { setIsLoading } = useContext(LoadingContext);
   const navigate = useNavigate();
-  const { id } = useParams();
-  const { data: banks } = useFetchData<ISelectOption>('bank/select');
+  const { id } = useParams() as Params;
   const fetchById = useFetchById<ITransaction>('transaction', id);
-  const { showToast } = useContext(ToastContext);
+  const { data: banks } = useFetchData<ISelectOption>('bank/select');
 
   const values = fetchById || {
     bank: '',
@@ -42,8 +40,6 @@ export const TransactionForm = () => {
       initialValues={values}
       onSubmit={async (values) => {
         try {
-          setIsLoading(true);
-
           if (id) {
             await axios.patch(`${url}transaction/${id}`, values);
           } else {
@@ -52,9 +48,7 @@ export const TransactionForm = () => {
 
           navigate('/transaction');
         } catch (error) {
-          showToast(buildError(error), 'error');
-        } finally {
-          setIsLoading(false);
+          console.log('🚀 ~ onSubmit={ ~ error:', error);
         }
       }}
     >

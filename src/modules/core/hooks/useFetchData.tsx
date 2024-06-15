@@ -1,8 +1,7 @@
 import { useCallback, useContext, useEffect, useState } from 'react';
 import axios from 'axios';
-import { LoadingContext, ToastContext } from '../context';
 import { IInfo, IResponseAxios } from '../types';
-import { buildError } from '../utils';
+import { LoadingContext } from '../context';
 
 const URL_API_SERVER = `${import.meta.env.VITE_API_SERVER_URL}`;
 
@@ -14,8 +13,7 @@ export const useFetchData = <T,>(
   sortOrder?: string | null,
   pagination = false,
 ) => {
-  const { setIsLoading } = useContext(LoadingContext);
-  const { showToast } = useContext(ToastContext);
+  const { incrementLoading, decrementLoading } = useContext(LoadingContext);
 
   const [data, setData] = useState<{
     data: T[];
@@ -31,7 +29,6 @@ export const useFetchData = <T,>(
   });
 
   const fetchData = useCallback(async () => {
-    setIsLoading(true);
     try {
       const params = {
         ...(page !== undefined &&
@@ -46,6 +43,8 @@ export const useFetchData = <T,>(
       };
       if (pagination && !params.page) return;
 
+      incrementLoading();
+
       const response = await axios.get<IResponseAxios<T>>(
         `${URL_API_SERVER}${url}`,
         {
@@ -59,11 +58,19 @@ export const useFetchData = <T,>(
         info: response.data.info,
       });
     } catch (error) {
-      showToast(buildError(error), 'error');
-    } finally {
-      setIsLoading(false);
+      console.log('🚀 ~ fetchData ~ error:', error);
     }
-  }, [setIsLoading, page, pageSize, sortField, sortOrder, url, showToast]);
+    decrementLoading();
+  }, [
+    page,
+    pageSize,
+    sortField,
+    sortOrder,
+    pagination,
+    decrementLoading,
+    incrementLoading,
+    url,
+  ]);
 
   useEffect(() => {
     fetchData();
@@ -72,15 +79,15 @@ export const useFetchData = <T,>(
   return data;
 };
 
-export const useFetchById = <T,>(url: string, id: string | undefined) => {
-  const { setIsLoading } = useContext(LoadingContext);
-  const { showToast } = useContext(ToastContext);
+export const useFetchById = <T,>(url: string, id: string) => {
+  const { incrementLoading, decrementLoading } = useContext(LoadingContext);
   const [data, setData] = useState<T | null>(null);
 
   const fetchById = useCallback(async () => {
     if (!id) return;
 
-    setIsLoading(true);
+    incrementLoading();
+
     try {
       const response = await axios.get<IResponseAxios<T>>(
         `${URL_API_SERVER}${url}/${id}`,
@@ -89,11 +96,11 @@ export const useFetchById = <T,>(url: string, id: string | undefined) => {
 
       setData(data);
     } catch (error) {
-      showToast(buildError(error), 'error');
-    } finally {
-      setIsLoading(false);
+      console.log('🚀 ~ fetchById ~ error:', error);
     }
-  }, [id, setIsLoading, url, showToast]);
+
+    decrementLoading();
+  }, [decrementLoading, id, incrementLoading, url]);
 
   useEffect(() => {
     fetchById();
