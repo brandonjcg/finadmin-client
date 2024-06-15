@@ -10,7 +10,7 @@ export const LoadingProvider = ({ children }: LoadingProviderProps) => {
     [],
   );
   const decrementLoading = useCallback(
-    () => setLoadingCount((count) => count - 1),
+    () => setLoadingCount((count) => count && count - 1),
     [],
   );
 
