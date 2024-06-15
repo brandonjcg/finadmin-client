@@ -1,51 +1,85 @@
 import { useCallback, useContext, useEffect, useState } from 'react';
 import axios from 'axios';
-import { LoadingContext, ToastContext } from '../context';
-import { IResponseAxios } from '../types';
-import { buildError } from '../utils';
+import { IInfo, IResponseAxios } from '../types';
+import { LoadingContext } from '../context';
 
 const URL_API_SERVER = `${import.meta.env.VITE_API_SERVER_URL}`;
 
-export const useFetchData = <T,>(
-  url: string,
-  page?: number,
-  pageSize?: number,
-) => {
-  const { setIsLoading } = useContext(LoadingContext);
-  const { showToast } = useContext(ToastContext);
+type FetchDataProps = {
+  url: string;
+  page?: number;
+  pageSize?: number;
+  sortField?: string | null;
+  sortOrder?: string | null;
+  pagination?: boolean;
+};
+
+export const useFetchData = <T,>({
+  url,
+  page,
+  pageSize,
+  sortField = 'createdAt',
+  sortOrder = 'DESC',
+  pagination = false,
+}: FetchDataProps) => {
+  const { incrementLoading, decrementLoading } = useContext(LoadingContext);
 
   const [data, setData] = useState<{
     data: T[];
+    info: IInfo;
   }>({
     data: [],
+    info: {
+      total: 10,
+      totalPages: 1,
+      sort: 'createdAt',
+      order: 'DESC',
+    },
   });
 
   const fetchData = useCallback(async () => {
-    setIsLoading(true);
     try {
-      const config = {
-        params: {},
+      const params = {
+        ...(page !== undefined &&
+          pageSize !== undefined &&
+          sortField !== undefined &&
+          sortOrder !== undefined && {
+            page: page + 1,
+            limit: pageSize,
+            sort: sortField,
+            order: sortOrder,
+          }),
       };
-      if (page !== undefined && pageSize !== undefined) {
-        config.params = {
-          page: page + 1,
-          limit: pageSize,
-        };
-      }
+      if (pagination && !params.page) return;
+
+      incrementLoading();
+
       const response = await axios.get<IResponseAxios<T>>(
         `${URL_API_SERVER}${url}`,
-        config,
+        {
+          params,
+        },
       );
       const responseData = response.data.data;
+
       setData({
         data: responseData ?? [],
+        info: response.data.info,
       });
     } catch (error) {
-      showToast(buildError(error), 'error');
-    } finally {
-      setIsLoading(false);
+      console.log('🚀 ~ fetchData ~ error:', error);
     }
-  }, [setIsLoading, page, pageSize, url, showToast]);
+    decrementLoading();
+  }, [
+    decrementLoading,
+    page,
+    pageSize,
+    sortField,
+    sortOrder,
+    pagination,
+    incrementLoading,
+    url,
+  ]);
 
   useEffect(() => {
     fetchData();
@@ -54,28 +88,32 @@ export const useFetchData = <T,>(
   return data;
 };
 
-export const useFetchById = <T,>(url: string) => {
-  const { setIsLoading } = useContext(LoadingContext);
-  const { showToast } = useContext(ToastContext);
+export const useFetchById = <T,>(url: string, id: string) => {
+  const { incrementLoading, decrementLoading } = useContext(LoadingContext);
+  const [data, setData] = useState<T | null>(null);
 
-  const fetchById = useCallback(
-    async (id: string) => {
-      setIsLoading(true);
-      try {
-        const response = await axios.get<IResponseAxios<T>>(
-          `${URL_API_SERVER}${url}/${id}`,
-        );
-        const data = response.data.data;
+  const fetchById = useCallback(async () => {
+    if (!id) return;
 
-        return data;
-      } catch (error) {
-        showToast(buildError(error), 'error');
-      } finally {
-        setIsLoading(false);
-      }
-    },
-    [setIsLoading, url, showToast],
-  );
+    incrementLoading();
 
-  return fetchById;
+    try {
+      const response = await axios.get<IResponseAxios<T>>(
+        `${URL_API_SERVER}${url}/${id}`,
+      );
+      const data = response.data.data as T;
+
+      setData(data);
+    } catch (error) {
+      console.log('🚀 ~ fetchById ~ error:', error);
+    }
+
+    decrementLoading();
+  }, [decrementLoading, id, incrementLoading, url]);
+
+  useEffect(() => {
+    fetchById();
+  }, [fetchById]);
+
+  return data;
 };

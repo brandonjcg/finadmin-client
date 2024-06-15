@@ -1,67 +1,68 @@
-import { useContext, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
+import { Formik, Field, Form, FieldProps } from 'formik';
 import {
   ISelectOption,
-  LoadingContext,
-  ToastContext,
-  buildError,
   useFetchData,
+  useFetchById,
+  ITransaction,
 } from '@/modules';
-
-// TODO: Create components: select, input
 
 const url = `${import.meta.env.VITE_API_SERVER_URL}`;
 
+interface MyFormValues {
+  date: string | Date;
+}
+
+type Params = {
+  id: string;
+};
+
 export const TransactionForm = () => {
-  const { setIsLoading } = useContext(LoadingContext);
   const navigate = useNavigate();
-  const [bank, setBank] = useState('');
+  const { id } = useParams() as Params;
+  const fetchById = useFetchById<ITransaction>('transaction', id);
+  const { data: banks } = useFetchData<ISelectOption>({ url: 'bank/select' });
 
-  const { data: banks } = useFetchData<ISelectOption>('bank/select');
-
-  const { showToast } = useContext(ToastContext);
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    try {
-      e.preventDefault();
-      const data = new FormData(e.currentTarget);
-      const payload = {
-        bank,
-        concept: data.get('concept'),
-        store: data.get('store'),
-        amount: Number(data.get('amount')),
-        date: data.get('date'),
-        isReserved: data.get('isReserved') === 'on',
-        isPaid: data.get('isPaid') === 'on',
-      };
-
-      setIsLoading(true);
-
-      await axios.post(`${url}transaction`, payload);
-
-      navigate('/transactions');
-    } catch (error) {
-      alert(buildError(error));
-      showToast(buildError(error), 'error');
-    } finally {
-      setIsLoading(false);
-    }
+  const values = fetchById || {
+    bank: '',
+    concept: '',
+    store: '',
+    amount: '',
+    date: '',
+    isReserved: false,
+    isPaid: false,
   };
 
   return (
-    <div className="text-white p-6">
-      <h2 className="text-2xl font-bold text-center mb-6">
-        Create transaction
-      </h2>
-      <form onSubmit={handleSubmit} className="space-y-4">
+    <Formik
+      enableReinitialize
+      initialValues={values}
+      onSubmit={async (values) => {
+        try {
+          if (id) {
+            await axios.patch(`${url}transaction/${id}`, values);
+          } else {
+            await axios.post(`${url}transaction`, values);
+          }
+
+          navigate('/transaction');
+        } catch (error) {
+          console.log('🚀 ~ onSubmit={ ~ error:', error);
+        }
+      }}
+    >
+      <Form className="space-y-4">
         <div>
-          <label className="block text-sm font-medium text-gray-300">
+          <label
+            htmlFor="bank"
+            className="block text-sm font-medium text-gray-300"
+          >
             Banco
           </label>
-          <select
+          <Field
+            as="select"
             name="bank"
-            onChange={(e) => setBank(e.target.value)}
             className="block w-full pl-3 pr-10 py-2 text-base border-gray-600 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 rounded-md bg-gray-700"
           >
             <option value="">Seleccionar banco</option>
@@ -70,14 +71,17 @@ export const TransactionForm = () => {
                 {item.text}
               </option>
             ))}
-          </select>
+          </Field>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-300">
+          <label
+            htmlFor="concept"
+            className="block text-sm font-medium text-gray-300"
+          >
             Concepto
           </label>
-          <input
+          <Field
             type="text"
             name="concept"
             className="block w-full px-3 py-2 border border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 bg-gray-700"
@@ -85,10 +89,13 @@ export const TransactionForm = () => {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-300">
+          <label
+            htmlFor="store"
+            className="block text-sm font-medium text-gray-300"
+          >
             Tienda
           </label>
-          <input
+          <Field
             type="text"
             name="store"
             className="block w-full px-3 py-2 border border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 bg-gray-700"
@@ -96,10 +103,13 @@ export const TransactionForm = () => {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-300">
-            Cantidad
+          <label
+            htmlFor="amount"
+            className="block text-sm font-medium text-gray-300"
+          >
+            Monto
           </label>
-          <input
+          <Field
             type="number"
             name="amount"
             className="block w-full px-3 py-2 border border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 bg-gray-700"
@@ -107,42 +117,67 @@ export const TransactionForm = () => {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-300">
+          <label
+            htmlFor="date"
+            className="block text-sm font-medium text-gray-300"
+          >
             Fecha
           </label>
-          <input
-            type="date"
-            name="date"
-            className="block w-full px-3 py-2 border border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 bg-gray-700"
-            defaultValue={new Date().toISOString().split('T')[0]}
-          />
+          <Field name="date">
+            {({ field, form }: FieldProps<MyFormValues>) => (
+              <input
+                type="date"
+                {...field}
+                value={
+                  field?.value
+                    ? new Date(String(field.value)).toISOString().split('T')[0]
+                    : ''
+                }
+                onChange={(event) => {
+                  const date = new Date(event?.target?.value);
+                  form.setFieldValue(field?.name, date);
+                }}
+                className="block w-full px-3 py-2 border border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 bg-gray-700"
+              />
+            )}
+          </Field>
         </div>
 
-        <div className="flex items-center">
-          <input
+        <div>
+          <label
+            htmlFor="isReserved"
+            className="block text-sm font-medium text-gray-300"
+          >
+            Reservado
+          </label>
+          <Field
             type="checkbox"
             name="isReserved"
-            className="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500 bg-gray-800"
+            className="block w-full px-3 py-2 border border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 bg-gray-700"
           />
-          <label className="ml-2 text-sm text-gray-300">¿Está reservado?</label>
         </div>
 
-        <div className="flex items-center">
-          <input
+        <div>
+          <label
+            htmlFor="isPaid"
+            className="block text-sm font-medium text-gray-300"
+          >
+            Pagado
+          </label>
+          <Field
             type="checkbox"
             name="isPaid"
-            className="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500 bg-gray-800"
+            className="block w-full px-3 py-2 border border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 bg-gray-700"
           />
-          <label className="ml-2 text-sm text-gray-300">¿Está pagado?</label>
         </div>
 
         <button
           type="submit"
           className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
         >
-          Crear
+          {id ? 'Update' : 'Create'}
         </button>
-      </form>
-    </div>
+      </Form>
+    </Formik>
   );
 };

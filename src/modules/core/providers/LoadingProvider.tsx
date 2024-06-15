@@ -1,13 +1,22 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { LoadingContext } from '../context';
 import { LoadingProviderProps } from '../types';
 
 export const LoadingProvider = ({ children }: LoadingProviderProps) => {
-  const [isLoading, setIsLoading] = useState(false);
+  const [loadingCount, setLoadingCount] = useState(0);
+
+  const incrementLoading = useCallback(
+    () => setLoadingCount((count) => count + 1),
+    [],
+  );
+  const decrementLoading = useCallback(
+    () => setLoadingCount((count) => count && count - 1),
+    [],
+  );
 
   const contextValue = useMemo(
-    () => ({ isLoading, setIsLoading }),
-    [isLoading, setIsLoading],
+    () => ({ loadingCount, incrementLoading, decrementLoading }),
+    [loadingCount, incrementLoading, decrementLoading],
   );
 
   return (
