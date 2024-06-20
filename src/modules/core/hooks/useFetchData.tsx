@@ -19,7 +19,7 @@ export const useFetchData = <T,>({
   page,
   pageSize,
   sortField = 'createdAt',
-  sortOrder = 'DESC',
+  sortOrder = 'desc',
   pagination = false,
 }: FetchDataProps) => {
   const { incrementLoading, decrementLoading } = useContext(LoadingContext);
@@ -33,7 +33,7 @@ export const useFetchData = <T,>({
       total: 10,
       totalPages: 1,
       sort: 'createdAt',
-      order: 'DESC',
+      order: 'desc',
     },
   });
 
