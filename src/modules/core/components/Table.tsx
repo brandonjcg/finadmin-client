@@ -1,7 +1,7 @@
-import { createTheme, ThemeProvider } from '@mui/material/styles';
 import {
   DataGrid,
   GridColDef,
+  GridFilterModel,
   GridPaginationModel,
   GridRowParams,
   GridSortModel,
@@ -10,19 +10,15 @@ import { useFetchData } from '../hooks';
 import { IPaginationState } from '../types';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-
-const darkTheme = createTheme({
-  palette: {
-    mode: 'dark',
-  },
-});
+import { debounce } from '@mui/material';
 
 interface TableProps {
+  name: string;
   columns: GridColDef[];
   url: string;
 }
 
-export const Table = <T,>({ url, columns }: TableProps) => {
+export const Table = <T,>({ name, url: originalUrl, columns }: TableProps) => {
   const [pagination, setPagination] = useState<IPaginationState>({
     page: 0,
     pageSize: 10,
@@ -31,6 +27,7 @@ export const Table = <T,>({ url, columns }: TableProps) => {
   const [sortModel, setSortModel] = useState<GridSortModel>([
     { field: 'createdAt', sort: 'desc' },
   ]);
+  const [url, setUrl] = useState<string>(originalUrl);
 
   const handleSortModelChange = (model: GridSortModel) => {
     setSortModel(model);
@@ -48,37 +45,70 @@ export const Table = <T,>({ url, columns }: TableProps) => {
   const navigate = useNavigate();
 
   const handleRowClick = async (params: GridRowParams) => {
-    navigate(`/${url}/${params.row._id}`);
+    navigate(`/${name}/${params.row._id}`);
   };
 
+  const onFilterChange = debounce((model: GridFilterModel) => {
+    let newFilters = '';
+
+    model.items.forEach((item) => {
+      if (item.value === '' || !item.value) return;
+
+      newFilters += `filters[${item.field}]=${item.value}&`;
+    });
+
+    newFilters = newFilters.slice(0, -1);
+
+    if (newFilters !== '') {
+      setUrl((prevUrl) => {
+        const [base, ...params] = prevUrl.split('?');
+        const existingParams = params.length ? params[0].split('&') : [];
+        const newParams = existingParams.map((param) => {
+          const [key] = param.split('=');
+          const newFilterKey = newFilters.split('=')[0];
+          if (key === newFilterKey) {
+            return newFilters;
+          }
+          return param;
+        });
+
+        if (!newParams.includes(newFilters)) {
+          newParams.push(newFilters);
+        }
+
+        return `${base}?${newParams.join('&')}`;
+      });
+    }
+  }, 500);
+
   return (
-    <ThemeProvider theme={darkTheme}>
-      <DataGrid
-        getRowId={({ _id }) => _id}
-        rows={data}
-        columns={columns}
-        paginationMode="server"
-        rowCount={info.total}
-        pageSizeOptions={[10]}
-        paginationModel={{
-          page: pagination.page,
-          pageSize: pagination.pageSize,
-        }}
-        onPaginationModelChange={(model: GridPaginationModel) => {
-          if (model.page !== pagination.page)
-            setPagination((prev) => ({ ...prev, page: model.page }));
-          if (model.pageSize !== pagination.pageSize)
-            setPagination({
-              page: 0,
-              pageSize: model.pageSize,
-              total: pagination.total,
-            });
-        }}
-        autoHeight
-        onRowClick={handleRowClick}
-        sortModel={sortModel}
-        onSortModelChange={handleSortModelChange}
-      />
-    </ThemeProvider>
+    <DataGrid
+      getRowId={({ _id }) => _id}
+      rows={data}
+      columns={columns}
+      paginationMode="server"
+      rowCount={info.total}
+      pageSizeOptions={[10]}
+      paginationModel={{
+        page: pagination.page,
+        pageSize: pagination.pageSize,
+      }}
+      onPaginationModelChange={(model: GridPaginationModel) => {
+        if (model.page !== pagination.page)
+          setPagination((prev) => ({ ...prev, page: model.page }));
+        if (model.pageSize !== pagination.pageSize)
+          setPagination({
+            page: 0,
+            pageSize: model.pageSize,
+            total: pagination.total,
+          });
+      }}
+      autoHeight
+      onRowClick={handleRowClick}
+      sortModel={sortModel}
+      onSortModelChange={handleSortModelChange}
+      filterMode="server"
+      onFilterModelChange={onFilterChange}
+    />
   );
 };
