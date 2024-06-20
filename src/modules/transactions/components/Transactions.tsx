@@ -1,5 +1,14 @@
-import { TODO } from '@/modules';
-import { Table } from '@/modules/core/components/Table';
+import { TODO, Table, useFetchData } from '@/modules';
+import {
+  ButtonGroup,
+  FormControl,
+  FormControlLabel,
+  FormLabel,
+  Radio,
+  RadioGroup,
+  Switch,
+} from '@mui/material';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 const columns = [
@@ -22,16 +31,64 @@ const columns = [
   },
 ];
 
-export const Transactions = () => {
+export const Transactions = <T,>() => {
+  const { data } = useFetchData<T>({
+    url: 'bank/select',
+  });
+  const [isPaid, setIsPaid] = useState<boolean>(false);
+  const [bank, setBank] = useState<string | null>(null);
+  const [url, setUrl] = useState<string>(
+    `transaction?filters[isPaid]=${isPaid}`,
+  );
+
+  const handleIsPaidChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const checked = event.target.checked;
+    setIsPaid(checked);
+    setUrl(
+      `transaction?filters[isPaid]=${checked}${
+        bank ? `&filters[bank]=${bank}` : ''
+      }`,
+    );
+  };
+
+  const handleRadioButtonChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const value = event.target.value;
+    setBank(value);
+    setUrl(`transaction?filters[isPaid]=${isPaid}&filters[bank]=${value}`);
+  };
+
   return (
     <div className="overflow-x-auto">
+      <FormLabel>Is paid?</FormLabel>
+      <Switch checked={isPaid} onChange={handleIsPaidChange} />
+      <ButtonGroup variant="contained" aria-label="Basic button group">
+        <FormControl className="className">
+          <RadioGroup
+            row
+            aria-labelledby="demo-row-radio-buttons-group-label"
+            name="row-radio-buttons-group"
+            onChange={handleRadioButtonChange}
+          >
+            {data?.map((item: TODO) => (
+              <FormControlLabel
+                key={item._id}
+                value={item._id}
+                control={<Radio />}
+                label={item.text}
+              />
+            ))}
+          </RadioGroup>
+        </FormControl>
+      </ButtonGroup>
       <Link
         to="/transaction/create"
         className="mb-4 inline-block bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
       >
         Add transaction
       </Link>
-      <Table columns={columns} url="transaction" />
+      <Table name="transaction" key={url} columns={columns} url={url} />
     </div>
   );
 };
