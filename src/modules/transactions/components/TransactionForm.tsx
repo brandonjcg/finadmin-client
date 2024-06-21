@@ -24,20 +24,10 @@ export const TransactionForm = () => {
   const fetchById = useFetchById<ITransaction>('transaction', id);
   const { data: banks } = useFetchData<ISelectOption>({ url: 'bank/select' });
 
-  const values = fetchById || {
-    bank: '',
-    concept: '',
-    store: '',
-    amount: '',
-    date: '',
-    isReserved: false,
-    isPaid: false,
-  };
-
   return (
     <Formik
       enableReinitialize
-      initialValues={values}
+      initialValues={fetchById || {}}
       onSubmit={async (values) => {
         try {
           if (id) {
@@ -58,7 +48,7 @@ export const TransactionForm = () => {
             htmlFor="bank"
             className="block text-sm font-medium text-gray-300"
           >
-            Banco
+            Bank
           </label>
           <Field
             as="select"
@@ -79,7 +69,7 @@ export const TransactionForm = () => {
             htmlFor="concept"
             className="block text-sm font-medium text-gray-300"
           >
-            Concepto
+            Concept
           </label>
           <Field
             type="text"
@@ -93,7 +83,7 @@ export const TransactionForm = () => {
             htmlFor="store"
             className="block text-sm font-medium text-gray-300"
           >
-            Tienda
+            Store
           </label>
           <Field
             type="text"
@@ -107,7 +97,7 @@ export const TransactionForm = () => {
             htmlFor="amount"
             className="block text-sm font-medium text-gray-300"
           >
-            Monto
+            Amount
           </label>
           <Field
             type="number"
@@ -121,7 +111,7 @@ export const TransactionForm = () => {
             htmlFor="date"
             className="block text-sm font-medium text-gray-300"
           >
-            Fecha
+            Date
           </label>
           <Field name="date">
             {({ field, form }: FieldProps<MyFormValues>) => (
@@ -148,7 +138,7 @@ export const TransactionForm = () => {
             htmlFor="isReserved"
             className="block text-sm font-medium text-gray-300"
           >
-            Reservado
+            Is reserved?
           </label>
           <Field
             type="checkbox"
@@ -162,11 +152,25 @@ export const TransactionForm = () => {
             htmlFor="isPaid"
             className="block text-sm font-medium text-gray-300"
           >
-            Pagado
+            Is paid?
           </label>
           <Field
             type="checkbox"
             name="isPaid"
+            className="block w-full px-3 py-2 border border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 bg-gray-700"
+          />
+        </div>
+
+        <div>
+          <label
+            htmlFor="additionalComments"
+            className="block text-sm font-medium text-gray-300"
+          >
+            Additional comments
+          </label>
+          <Field
+            as="textarea"
+            name="additionalComments"
             className="block w-full px-3 py-2 border border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 bg-gray-700"
           />
         </div>
