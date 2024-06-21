@@ -1,6 +1,6 @@
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
-import { Formik, Field, Form, FieldProps } from 'formik';
+import { Formik, Form } from 'formik';
 import {
   ISelectOption,
   useFetchData,
@@ -8,16 +8,25 @@ import {
   ITransaction,
   InputForm,
   SelectForm,
+  CheckboxForm,
+  DatepickerForm,
 } from '@/modules';
 
 const url = `${import.meta.env.VITE_API_SERVER_URL}`;
 
-interface MyFormValues {
-  date: string | Date;
-}
-
 type Params = {
   id: string;
+};
+
+const initialValues = {
+  bank: '',
+  concept: '',
+  store: '',
+  amount: 0,
+  date: new Date(),
+  isReserved: false,
+  isPaid: false,
+  additionalComments: '',
 };
 
 export const TransactionForm = () => {
@@ -26,16 +35,7 @@ export const TransactionForm = () => {
   const fetchById = useFetchById<ITransaction>('transaction', id);
   const { data: banks } = useFetchData<ISelectOption>({ url: 'bank/select' });
 
-  const values = fetchById || {
-    bank: '',
-    concept: '',
-    store: '',
-    amount: '',
-    date: '',
-    isReserved: false,
-    isPaid: false,
-    additionalComments: '',
-  };
+  const values = fetchById || initialValues;
 
   return (
     <Formik
@@ -43,11 +43,9 @@ export const TransactionForm = () => {
       initialValues={values}
       onSubmit={async (values) => {
         try {
-          if (id) {
-            await axios.patch(`${url}transaction/${id}`, values);
-          } else {
-            await axios.post(`${url}transaction`, values);
-          }
+          if (id) return await axios.patch(`${url}transaction/${id}`, values);
+
+          await axios.post(`${url}transaction`, values);
 
           navigate('/transaction');
         } catch (error) {
@@ -60,75 +58,14 @@ export const TransactionForm = () => {
         <InputForm name="concept" label="Concept" />
         <InputForm name="store" label="Store" />
         <InputForm name="amount" label="Amount" type="number" />
-
-        <div>
-          <label
-            htmlFor="date"
-            className="block text-sm font-medium text-gray-300"
-          >
-            Date
-          </label>
-          <Field name="date">
-            {({ field, form }: FieldProps<MyFormValues>) => (
-              <input
-                type="date"
-                {...field}
-                value={
-                  field?.value
-                    ? new Date(String(field.value)).toISOString().split('T')[0]
-                    : ''
-                }
-                onChange={(event) => {
-                  const date = new Date(event?.target?.value);
-                  form.setFieldValue(field?.name, date);
-                }}
-                className="block w-full px-3 py-2 border border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 bg-gray-700"
-              />
-            )}
-          </Field>
-        </div>
-
-        <div>
-          <label
-            htmlFor="isReserved"
-            className="block text-sm font-medium text-gray-300"
-          >
-            Is reserved?
-          </label>
-          <Field
-            type="checkbox"
-            name="isReserved"
-            className="block w-full px-3 py-2 border border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 bg-gray-700"
-          />
-        </div>
-
-        <div>
-          <label
-            htmlFor="isPaid"
-            className="block text-sm font-medium text-gray-300"
-          >
-            Is paid?
-          </label>
-          <Field
-            type="checkbox"
-            name="isPaid"
-            className="block w-full px-3 py-2 border border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 bg-gray-700"
-          />
-        </div>
-
-        <div>
-          <label
-            htmlFor="additionalComments"
-            className="block text-sm font-medium text-gray-300"
-          >
-            Additional comments
-          </label>
-          <Field
-            as="textarea"
-            name="additionalComments"
-            className="block w-full px-3 py-2 border border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 bg-gray-700"
-          />
-        </div>
+        <DatepickerForm name="date" label="Date" />
+        <CheckboxForm name="isReserved" label="Is reserved?" />
+        <CheckboxForm name="isPaid" label="Is paid?" />
+        <InputForm
+          name="additionalComments"
+          label="Additional comments"
+          textarea
+        />
 
         <button
           type="submit"
