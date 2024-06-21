@@ -21,7 +21,7 @@ export interface IResponseAxios<T> {
 
 export interface ISelectOption {
   _id: string;
-  logo: string;
+  logo?: string;
   text: string;
 }
 
