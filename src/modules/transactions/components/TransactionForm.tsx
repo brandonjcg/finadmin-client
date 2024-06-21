@@ -6,6 +6,7 @@ import {
   useFetchData,
   useFetchById,
   ITransaction,
+  InputForm,
 } from '@/modules';
 
 const url = `${import.meta.env.VITE_API_SERVER_URL}`;
@@ -64,47 +65,9 @@ export const TransactionForm = () => {
           </Field>
         </div>
 
-        <div>
-          <label
-            htmlFor="concept"
-            className="block text-sm font-medium text-gray-300"
-          >
-            Concept
-          </label>
-          <Field
-            type="text"
-            name="concept"
-            className="block w-full px-3 py-2 border border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 bg-gray-700"
-          />
-        </div>
-
-        <div>
-          <label
-            htmlFor="store"
-            className="block text-sm font-medium text-gray-300"
-          >
-            Store
-          </label>
-          <Field
-            type="text"
-            name="store"
-            className="block w-full px-3 py-2 border border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 bg-gray-700"
-          />
-        </div>
-
-        <div>
-          <label
-            htmlFor="amount"
-            className="block text-sm font-medium text-gray-300"
-          >
-            Amount
-          </label>
-          <Field
-            type="number"
-            name="amount"
-            className="block w-full px-3 py-2 border border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 bg-gray-700"
-          />
-        </div>
+        <InputForm name="concept" label="Concept" />
+        <InputForm name="store" label="Store" />
+        <InputForm name="amount" label="Amount" type="number" />
 
         <div>
           <label
