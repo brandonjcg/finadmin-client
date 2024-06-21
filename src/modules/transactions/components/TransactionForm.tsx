@@ -7,6 +7,7 @@ import {
   useFetchById,
   ITransaction,
   InputForm,
+  SelectForm,
 } from '@/modules';
 
 const url = `${import.meta.env.VITE_API_SERVER_URL}`;
@@ -44,27 +45,7 @@ export const TransactionForm = () => {
       }}
     >
       <Form className="space-y-4">
-        <div>
-          <label
-            htmlFor="bank"
-            className="block text-sm font-medium text-gray-300"
-          >
-            Bank
-          </label>
-          <Field
-            as="select"
-            name="bank"
-            className="block w-full pl-3 pr-10 py-2 text-base border-gray-600 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 rounded-md bg-gray-700"
-          >
-            <option value="">Seleccionar banco</option>
-            {banks.map((item) => (
-              <option key={item._id} value={item._id}>
-                {item.text}
-              </option>
-            ))}
-          </Field>
-        </div>
-
+        <SelectForm rows={banks} name="bank" label="Bank" />
         <InputForm name="concept" label="Concept" />
         <InputForm name="store" label="Store" />
         <InputForm name="amount" label="Amount" type="number" />
