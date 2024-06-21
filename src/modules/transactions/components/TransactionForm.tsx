@@ -32,6 +32,7 @@ export const TransactionForm = () => {
     date: '',
     isReserved: false,
     isPaid: false,
+    additionalComments: '',
   };
 
   return (
@@ -167,6 +168,20 @@ export const TransactionForm = () => {
           <Field
             type="checkbox"
             name="isPaid"
+            className="block w-full px-3 py-2 border border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 bg-gray-700"
+          />
+        </div>
+
+        <div>
+          <label
+            htmlFor="additionalComments"
+            className="block text-sm font-medium text-gray-300"
+          >
+            Comentarios adicionales
+          </label>
+          <Field
+            as="textarea"
+            name="additionalComments"
             className="block w-full px-3 py-2 border border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 bg-gray-700"
           />
         </div>
