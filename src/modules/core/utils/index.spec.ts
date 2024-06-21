@@ -21,4 +21,10 @@ describe('Unit test buildError fn', () => {
 
     expect(result).toBe('Error fetching data');
   });
+
+  test('Should return default error message', async () => {
+    const result = buildError(new Error('Error fetching data'));
+
+    expect(result).toBe('Error fetching data');
+  });
 });
