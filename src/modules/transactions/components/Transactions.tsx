@@ -35,20 +35,37 @@ export const Transactions = <T,>() => {
   const { data } = useFetchData<T>({
     url: 'bank/select',
   });
-  const [isPaid, setIsPaid] = useState<boolean>(false);
+  const [state, setState] = useState({
+    isPaid: false,
+    isReserved: false,
+  });
   const [bank, setBank] = useState<string | null>(null);
   const [url, setUrl] = useState<string>(
-    `transaction?filters[isPaid]=${isPaid}`,
+    `transaction?filters[isPaid]=${state.isPaid}&filters[isReserved]=${state.isReserved}`,
   );
 
-  const handleIsPaidChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (
+    fieldName: string,
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
     const checked = event.target.checked;
-    setIsPaid(checked);
-    setUrl(
-      `transaction?filters[isPaid]=${checked}${
-        bank ? `&filters[bank]=${bank}` : ''
-      }`,
-    );
+    setState((prevState) => {
+      setUrl(
+        `transaction?${Object.keys(prevState)
+          .filter((key) => key !== fieldName)
+          .map(
+            (key) =>
+              `filters[${key}]=${prevState[key as keyof typeof prevState]}`,
+          )
+          .join('&')}&filters[${fieldName}]=${checked}${
+          bank ? `&filters[bank]=${bank}` : ''
+        }`,
+      );
+      return {
+        ...prevState,
+        [fieldName]: checked,
+      };
+    });
   };
 
   const handleRadioButtonChange = (
@@ -56,13 +73,23 @@ export const Transactions = <T,>() => {
   ) => {
     const value = event.target.value;
     setBank(value);
-    setUrl(`transaction?filters[isPaid]=${isPaid}&filters[bank]=${value}`);
+    setUrl(
+      `transaction?filters[isPaid]=${state.isPaid}&filters[isReserved]=${state.isReserved}&filters[bank]=${value}`,
+    );
   };
 
   return (
     <div className="overflow-x-auto">
       <FormLabel>Is paid?</FormLabel>
-      <Switch checked={isPaid} onChange={handleIsPaidChange} />
+      <Switch
+        checked={state.isPaid}
+        onChange={(e) => handleInputChange('isPaid', e)}
+      />
+      <FormLabel>Is reserved?</FormLabel>
+      <Switch
+        checked={state.isReserved}
+        onChange={(e) => handleInputChange('isReserved', e)}
+      />
       <ButtonGroup variant="contained" aria-label="Basic button group">
         <FormControl className="className">
           <RadioGroup
