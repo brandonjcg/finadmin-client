@@ -22,11 +22,11 @@ const columns = [
   { field: 'store', headerName: 'Store', width: 150 },
   { field: 'amount', headerName: 'Amount', width: 150 },
   { field: 'date', headerName: 'Date', width: 150 },
-  { field: 'isReserved', headerName: 'Reserved', width: 150 },
-  { field: 'isPaid', headerName: 'Paid', width: 150 },
+  { field: 'isReserved', headerName: 'Is reserved?', width: 150 },
+  { field: 'isPaid', headerName: 'Is paid?', width: 150 },
   {
     field: 'additionalComments',
-    headerName: 'Additional Comments',
+    headerName: 'Additional comments',
     width: 200,
   },
 ];

@@ -48,7 +48,7 @@ export const TransactionForm = () => {
             htmlFor="bank"
             className="block text-sm font-medium text-gray-300"
           >
-            Banco
+            Bank
           </label>
           <Field
             as="select"
@@ -69,7 +69,7 @@ export const TransactionForm = () => {
             htmlFor="concept"
             className="block text-sm font-medium text-gray-300"
           >
-            Concepto
+            Concept
           </label>
           <Field
             type="text"
@@ -83,7 +83,7 @@ export const TransactionForm = () => {
             htmlFor="store"
             className="block text-sm font-medium text-gray-300"
           >
-            Tienda
+            Store
           </label>
           <Field
             type="text"
@@ -97,7 +97,7 @@ export const TransactionForm = () => {
             htmlFor="amount"
             className="block text-sm font-medium text-gray-300"
           >
-            Monto
+            Amount
           </label>
           <Field
             type="number"
@@ -111,7 +111,7 @@ export const TransactionForm = () => {
             htmlFor="date"
             className="block text-sm font-medium text-gray-300"
           >
-            Fecha
+            Date
           </label>
           <Field name="date">
             {({ field, form }: FieldProps<MyFormValues>) => (
@@ -138,7 +138,7 @@ export const TransactionForm = () => {
             htmlFor="isReserved"
             className="block text-sm font-medium text-gray-300"
           >
-            Reservado
+            Is reserved?
           </label>
           <Field
             type="checkbox"
@@ -152,7 +152,7 @@ export const TransactionForm = () => {
             htmlFor="isPaid"
             className="block text-sm font-medium text-gray-300"
           >
-            Pagado
+            Is paid?
           </label>
           <Field
             type="checkbox"
@@ -166,7 +166,7 @@ export const TransactionForm = () => {
             htmlFor="additionalComments"
             className="block text-sm font-medium text-gray-300"
           >
-            Comentarios adicionales
+            Additional comments
           </label>
           <Field
             as="textarea"
