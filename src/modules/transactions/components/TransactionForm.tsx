@@ -26,10 +26,21 @@ export const TransactionForm = () => {
   const fetchById = useFetchById<ITransaction>('transaction', id);
   const { data: banks } = useFetchData<ISelectOption>({ url: 'bank/select' });
 
+  const values = fetchById || {
+    bank: '',
+    concept: '',
+    store: '',
+    amount: '',
+    date: '',
+    isReserved: false,
+    isPaid: false,
+    additionalComments: '',
+  };
+
   return (
     <Formik
       enableReinitialize
-      initialValues={fetchById || {}}
+      initialValues={values}
       onSubmit={async (values) => {
         try {
           if (id) {
