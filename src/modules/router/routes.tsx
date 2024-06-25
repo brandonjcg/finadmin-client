@@ -1,5 +1,6 @@
 import { Banks } from '../banks';
 import { Dashboard } from '../dashboard';
+import { Totals } from '../totals';
 import { TransactionForm, Transactions } from '../transactions';
 
 export const routes = [
@@ -42,5 +43,13 @@ export const routes = [
     element: <TransactionForm />,
     icon: 'fa-solid fa-credit-card-alt',
     hidden: true,
+  },
+  {
+    title: 'Totals',
+    path: '/totals',
+    element: <Totals />,
+    description: 'Grouped totals',
+    icon: 'fa-solid fa-calculator',
+    hidden: false,
   },
 ];
