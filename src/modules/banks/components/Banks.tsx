@@ -1,8 +1,8 @@
 import { useFetchData } from '@/modules/core';
-import { IBank } from '../types';
+import { IBankSelect } from '../types';
 
 export const Banks = () => {
-  const { data: banks } = useFetchData<IBank>({ url: 'bank/select' });
+  const { data: banks } = useFetchData<IBankSelect>({ url: 'bank/select' });
 
   return (
     <>
@@ -13,8 +13,8 @@ export const Banks = () => {
             key={bank._id}
             className="flex flex-col items-center bg-white rounded-lg border shadow-md p-4"
           >
-            <img src={bank.logo} alt={bank.name} className="w-16 h-16" />
-            <span className="mt-2 text-lg font-semibold">{bank.name}</span>
+            <img src={bank.logo} alt={bank.text} className="w-16 h-16" />
+            <span className="mt-2 text-lg font-semibold">{bank.text}</span>
           </div>
         ))}
       </div>

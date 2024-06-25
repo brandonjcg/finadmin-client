@@ -6,3 +6,9 @@ export interface IBank {
   createdAt: string;
   updatedAt: string;
 }
+
+export interface IBankSelect {
+  _id: string;
+  text: string;
+  logo: string;
+}
