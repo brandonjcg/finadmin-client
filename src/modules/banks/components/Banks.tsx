@@ -1,4 +1,4 @@
-import { useFetchData } from '@/modules/core';
+import { useFetchData } from '@/modules';
 import { IBankSelect } from '../types';
 
 export const Banks = () => {
