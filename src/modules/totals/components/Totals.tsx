@@ -1,46 +1,35 @@
 import { useState } from 'react';
 import axios from 'axios';
-import {
-  Avatar,
-  Box,
-  Button,
-  Checkbox,
-  Grid,
-  List,
-  ListItem,
-  ListItemAvatar,
-  ListItemButton,
-  ListItemText,
-} from '@mui/material';
-import { IBankSelect, useFetchData } from '@/modules';
+import { Box, Button, Grid, List } from '@mui/material';
+import { FiltersTransaction, IBankSelect, useFetchData } from '@/modules';
 import { TotalCard } from './TotalCard';
+import { TotalsItem } from './TotalsItem';
 
 const URL_API_SERVER = `${import.meta.env.VITE_API_SERVER_URL}`;
 
 export const Totals = () => {
   const { data: banks } = useFetchData<IBankSelect>({ url: 'bank/select' });
   const [checked, setChecked] = useState<string[]>([]);
-  const haveChecked = checked.length;
   const [total, setTotal] = useState('');
-
-  const handleToggle = (value: string) => () => {
-    const newChecked = [...checked];
-
-    newChecked.includes(value)
-      ? newChecked.splice(newChecked.indexOf(value), 1)
-      : newChecked.push(value);
-
-    setChecked(newChecked);
-  };
+  const [isPaidChecked, setIsPaidChecked] = useState<string | boolean>('empty');
+  const [isReservedChecked, setIsReservedChecked] = useState<string | boolean>(
+    'empty',
+  );
+  const haveChecked = checked.length;
 
   const handleSubmit = async () => {
     try {
+      const params = {
+        ids: checked.join(','),
+      } as Record<string, string | boolean>;
+
+      if (isPaidChecked !== 'empty') params.isPaid = isPaidChecked;
+      if (isReservedChecked !== 'empty') params.isReserved = isReservedChecked;
+
       const response = await axios.get(
         `${URL_API_SERVER}transaction/bank/group`,
         {
-          params: {
-            ids: checked.join(','),
-          },
+          params,
         },
       );
 
@@ -61,40 +50,28 @@ export const Totals = () => {
   return (
     <Box>
       <h1 className="text-center font-bold text-2xl mb-4">Totals grouped</h1>
+      <FiltersTransaction
+        isPaidChecked={isPaidChecked}
+        setIsPaidChecked={setIsPaidChecked}
+        isReservedChecked={isReservedChecked}
+        setIsReservedChecked={setIsReservedChecked}
+      />
       <Box>
         <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
           <Grid item xs={6}>
             <List>
-              {banks.map((item) => {
-                const id = item._id;
-                const idLabel = `checkbox-list-label-${id}`;
-                return (
-                  <ListItem
-                    key={id}
-                    onClick={handleToggle(id)}
-                    secondaryAction={
-                      <Checkbox
-                        edge="end"
-                        onChange={handleToggle(id)}
-                        checked={checked.indexOf(id) !== -1}
-                        inputProps={{ 'aria-labelledby': idLabel }}
-                      />
-                    }
-                    disablePadding
-                    className="bg-gray-800 mb-2 rounded"
-                  >
-                    <ListItemButton>
-                      <ListItemAvatar>
-                        <Avatar alt={`img-°${id + 1}`} src={item.logo} />
-                      </ListItemAvatar>
-                      <ListItemText id={idLabel} primary={item.text} />
-                    </ListItemButton>
-                  </ListItem>
-                );
-              })}
+              {banks?.map((item) => (
+                <TotalsItem
+                  key={item._id}
+                  item={item}
+                  checked={checked}
+                  setChecked={setChecked}
+                  setTotal={setTotal}
+                />
+              ))}
             </List>
           </Grid>
-          <Grid item xs={12} md={6}>
+          <Grid item xs={6}>
             <TotalCard total={total} />
           </Grid>
         </Grid>
