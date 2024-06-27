@@ -22,7 +22,7 @@ const initialValues = {
   bank: '',
   concept: '',
   store: '',
-  amount: 0,
+  amount: '',
   date: new Date(),
   isReserved: false,
   isPaid: false,
@@ -46,10 +46,10 @@ export const TransactionForm = () => {
           if (id) return await axios.patch(`${url}transaction/${id}`, values);
 
           await axios.post(`${url}transaction`, values);
-
-          navigate('/transaction');
         } catch (error) {
           console.log('🚀 ~ onSubmit={ ~ error:', error);
+        } finally {
+          navigate('/transaction');
         }
       }}
     >

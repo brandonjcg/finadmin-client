@@ -1,6 +1,6 @@
 import { RouterProvider } from 'react-router-dom';
-import { router, type TODO } from './modules';
+import { router } from './modules';
 
-export const App = (): TODO => {
+export const App = () => {
   return <RouterProvider router={router} />;
 };
