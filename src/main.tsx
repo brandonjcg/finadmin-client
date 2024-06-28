@@ -19,5 +19,4 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
   </ThemeProvider>,
 );
 
-// TODO: add unit test
 // TODO: try create select with input text component
