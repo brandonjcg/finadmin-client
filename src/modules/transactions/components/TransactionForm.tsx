@@ -54,11 +54,11 @@ export const TransactionForm = () => {
       }}
     >
       <Form className="space-y-4">
-        <SelectForm rows={banks} name="bank" label="Bank" />
-        <InputForm name="concept" label="Concept" />
-        <InputForm name="store" label="Store" />
-        <InputForm name="amount" label="Amount" type="number" />
-        <DatepickerForm name="date" label="Date" />
+        <SelectForm rows={banks} name="bank" label="Bank" required />
+        <InputForm name="concept" label="Concept" required />
+        <InputForm name="store" label="Store" required />
+        <InputForm name="amount" label="Amount" type="number" required />
+        <DatepickerForm name="date" label="Date" required />
         <CheckboxForm name="isReserved" label="Is reserved?" />
         <CheckboxForm name="isPaid" label="Is paid?" />
         <InputForm

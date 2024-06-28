@@ -7,13 +7,19 @@ interface MyFormValues {
 interface DatepickerFormProps {
   name: string;
   label: string;
+  required?: boolean;
 }
 
-export const DatepickerForm = ({ name, label }: DatepickerFormProps) => {
+export const DatepickerForm = ({
+  name,
+  label,
+  required = false,
+}: DatepickerFormProps) => {
   return (
     <>
       <label htmlFor={name} className="block text-sm font-medium text-gray-300">
         {label}
+        {required && <span className="text-red-500"> *</span>}
       </label>
       <Field name={name}>
         {({ field, form }: FieldProps<MyFormValues>) => (
@@ -31,6 +37,7 @@ export const DatepickerForm = ({ name, label }: DatepickerFormProps) => {
               form.setFieldValue(field?.name, date);
             }}
             className="block w-full px-3 py-2 border border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 bg-gray-700"
+            required={required}
           />
         )}
       </Field>
