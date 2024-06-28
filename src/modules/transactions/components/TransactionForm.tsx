@@ -23,7 +23,12 @@ const initialValues = {
   concept: '',
   store: '',
   amount: '',
-  date: new Date(),
+  date: new Date().toLocaleDateString('en-US', {
+    timeZone: 'America/Tijuana',
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+  }),
   isReserved: false,
   isPaid: false,
   additionalComments: '',
