@@ -4,3 +4,4 @@ export * from './dashboard';
 export * from './layouts';
 export * from './router';
 export * from './transactions';
+export * from './totals';
