@@ -1,20 +1,13 @@
-import { Navigate, createBrowserRouter } from 'react-router-dom';
-import { DashboardLayout } from '../layouts';
+import { Navigate } from 'react-router-dom';
 import { routes } from './routes';
 
-export const router = createBrowserRouter([
+export const router = [
+  ...routes.map((route) => ({
+    path: route.path,
+    element: route.element,
+  })),
   {
-    path: '/',
-    element: <DashboardLayout />,
-    children: [
-      ...routes.map((route) => ({
-        path: route.path,
-        element: route.element,
-      })),
-      {
-        path: '',
-        element: <Navigate to={routes[0].path} />,
-      },
-    ],
+    path: '*',
+    element: <Navigate to={routes[0].path} replace />,
   },
-]);
+];
