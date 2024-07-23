@@ -4,6 +4,7 @@ import './index.css';
 import { LoadingProvider } from './modules';
 import { ThemeProvider } from '@emotion/react';
 import { createTheme } from '@mui/material';
+import { BrowserRouter as Router } from 'react-router-dom';
 
 const darkTheme = createTheme({
   palette: {
@@ -14,7 +15,9 @@ const darkTheme = createTheme({
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <ThemeProvider theme={darkTheme}>
     <LoadingProvider>
-      <App />
+      <Router>
+        <App />
+      </Router>
     </LoadingProvider>
   </ThemeProvider>,
 );
