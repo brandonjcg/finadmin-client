@@ -2,6 +2,7 @@ import { useCallback, useContext, useEffect, useState } from 'react';
 import axios from 'axios';
 import { IInfo, IResponseAxios } from '../types';
 import { LoadingContext } from '../context';
+import { buildError } from '../utils';
 
 const URL_API_SERVER = `${import.meta.env.VITE_API_SERVER_URL}`;
 
@@ -67,7 +68,7 @@ export const useFetchData = <T,>({
         info: response.data.info,
       });
     } catch (error) {
-      console.log('🚀 ~ fetchData ~ error:', error);
+      buildError(error);
     }
     decrementLoading();
   }, [
@@ -105,7 +106,7 @@ export const useFetchById = <T,>(url: string, id: string) => {
 
       setData(data);
     } catch (error) {
-      console.log('🚀 ~ fetchById ~ error:', error);
+      buildError(error);
     }
 
     decrementLoading();

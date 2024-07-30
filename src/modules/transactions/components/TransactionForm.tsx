@@ -10,6 +10,7 @@ import {
   SelectForm,
   CheckboxForm,
   DatepickerForm,
+  buildError,
 } from '@/modules';
 
 const url = `${import.meta.env.VITE_API_SERVER_URL}`;
@@ -52,7 +53,7 @@ export const TransactionForm = () => {
 
           await axios.post(`${url}transaction`, values);
         } catch (error) {
-          console.log('🚀 ~ onSubmit={ ~ error:', error);
+          buildError(error);
         } finally {
           navigate('/transaction');
         }

@@ -1,7 +1,12 @@
 import { useState } from 'react';
 import axios from 'axios';
 import { Box, Button, Grid, List } from '@mui/material';
-import { FiltersTransaction, IBankSelect, useFetchData } from '@/modules';
+import {
+  FiltersTransaction,
+  IBankSelect,
+  buildError,
+  useFetchData,
+} from '@/modules';
 import { TotalCard } from './TotalCard';
 import { TotalsItem } from './TotalsItem';
 
@@ -43,7 +48,7 @@ export const Totals = () => {
 
       return response;
     } catch (error) {
-      console.log('🚀 ~ handleSubmit ~ error:', error);
+      buildError(error);
     }
   };
 
