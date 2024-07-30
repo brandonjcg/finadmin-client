@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { Routes, Route, useNavigate } from 'react-router-dom';
+import { Toaster } from 'react-hot-toast';
 import { Analytics } from '@vercel/analytics/react';
 import {
   AuthPage,
@@ -19,6 +20,7 @@ export const App = () => {
 
   return (
     <>
+      <Toaster />
       <Analytics />
       <Routes>
         <Route path="auth" element={<AuthPage />} />
