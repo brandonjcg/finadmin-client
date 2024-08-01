@@ -5,7 +5,8 @@ import toast from 'react-hot-toast';
 
 export const buildError = <T>(error: Error | unknown) => {
   const data = error as AxiosError<IResponseAxios<T>>;
-  const message = data.response?.data.message;
+  const message =
+    data.response?.data.message ?? `${data.message}: ${data.config?.url}`;
   toast.error(message ?? 'Error fetching data');
 };
 
