@@ -118,3 +118,22 @@ export const useFetchById = <T,>(url: string, id: string) => {
 
   return data;
 };
+
+export const usePostData = <T,>(url: string) => {
+  const { incrementLoading, decrementLoading } = useContext(LoadingContext);
+
+  const postData = async (data: T) => {
+    incrementLoading();
+    try {
+      const response = await axios.post(`${URL_API_SERVER}${url}`, data);
+      return response.data;
+    } catch (error) {
+      buildError(error);
+      throw error;
+    } finally {
+      decrementLoading();
+    }
+  };
+
+  return postData;
+};

@@ -20,7 +20,14 @@ export const App = () => {
 
   return (
     <>
-      <Toaster />
+      <Toaster
+        toastOptions={{
+          style: {
+            maxWidth: '100%',
+            textAlign: 'center',
+          },
+        }}
+      />
       <Analytics />
       <Routes>
         <Route path="auth" element={<AuthPage />} />

@@ -1,5 +1,5 @@
-import { TODO, Table, useFetchData } from '@/modules';
 import {
+  Button,
   ButtonGroup,
   FormControl,
   FormControlLabel,
@@ -8,8 +8,11 @@ import {
   RadioGroup,
   Switch,
 } from '@mui/material';
+import { GridRowSelectionModel } from '@mui/x-data-grid';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { DialogForm, TODO, Table, useFetchData, usePostData } from '@/modules';
+import toast from 'react-hot-toast';
 
 const columns = [
   {
@@ -78,6 +81,26 @@ export const Transactions = <T,>() => {
     );
   };
 
+  const [open, setOpen] = useState(false);
+  const handleClickOpen = () => setOpen(true);
+
+  const handleClose = () => setOpen(false);
+
+  const [rowSelectionModel, setRowSelectionModel] =
+    useState<GridRowSelectionModel>([]);
+  const hasRowsSelected = rowSelectionModel.length;
+
+  const postData = usePostData('transaction/run-process');
+
+  const handleSubmit = async (idProcess: number) => {
+    const response = await postData({
+      idProcess,
+      rowsToUpdate: rowSelectionModel,
+    });
+
+    toast.success(response.message);
+  };
+
   return (
     <div className="overflow-x-auto">
       <FormLabel>Is paid?</FormLabel>
@@ -115,7 +138,28 @@ export const Transactions = <T,>() => {
       >
         Add transaction
       </Link>
-      <Table name="transaction" key={url} columns={columns} url={url} />
+
+      <Button
+        variant="outlined"
+        onClick={handleClickOpen}
+        disabled={!hasRowsSelected}
+      >
+        Run process
+      </Button>
+      <DialogForm
+        open={open}
+        handleClose={handleClose}
+        handleSubmit={handleSubmit}
+        data={rowSelectionModel}
+      />
+      <Table
+        name="transaction"
+        key={url}
+        columns={columns}
+        url={url}
+        rowSelection={rowSelectionModel}
+        setRowSelection={setRowSelectionModel}
+      />
     </div>
   );
 };
