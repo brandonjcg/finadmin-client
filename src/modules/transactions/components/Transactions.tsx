@@ -99,6 +99,13 @@ export const Transactions = <T,>() => {
     });
 
     toast.success(response.message);
+    setState({
+      isPaid: false,
+      isReserved: false,
+    });
+    setUrl(
+      `transaction?filters[isPaid]=false&filters[isReserved]=false&timestamp=${new Date().getTime()}`,
+    );
   };
 
   return (
