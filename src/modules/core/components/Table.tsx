@@ -4,6 +4,7 @@ import {
   GridFilterModel,
   GridPaginationModel,
   GridRowParams,
+  GridRowSelectionModel,
   GridSortModel,
 } from '@mui/x-data-grid';
 import { useFetchData } from '../hooks';
@@ -16,9 +17,17 @@ interface TableProps {
   name: string;
   columns: GridColDef[];
   url: string;
+  rowSelection: GridRowSelectionModel;
+  setRowSelection: (rowSelection: GridRowSelectionModel) => void;
 }
 
-export const Table = <T,>({ name, url: originalUrl, columns }: TableProps) => {
+export const Table = <T,>({
+  name,
+  url: originalUrl,
+  columns,
+  rowSelection,
+  setRowSelection,
+}: TableProps) => {
   const [pagination, setPagination] = useState<IPaginationState>({
     page: 0,
     pageSize: 10,
@@ -108,7 +117,13 @@ export const Table = <T,>({ name, url: originalUrl, columns }: TableProps) => {
       sortModel={sortModel}
       onSortModelChange={handleSortModelChange}
       filterMode="server"
+      checkboxSelection
       onFilterModelChange={onFilterChange}
+      onRowSelectionModelChange={(newRowSelectionModel) =>
+        setRowSelection(newRowSelectionModel)
+      }
+      rowSelectionModel={rowSelection}
+      keepNonExistentRowsSelected
     />
   );
 };
