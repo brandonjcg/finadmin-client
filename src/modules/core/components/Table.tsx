@@ -54,7 +54,7 @@ export const Table = <T,>({
   const navigate = useNavigate();
 
   const handleRowClick = async (params: GridRowParams) => {
-    navigate(`/${name}/${params.row._id}`);
+    navigate(`/${name}/${params.row._id}`, { replace: true });
   };
 
   const onFilterChange = debounce((model: GridFilterModel) => {
