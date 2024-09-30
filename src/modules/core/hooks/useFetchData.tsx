@@ -59,6 +59,7 @@ export const useFetchData = <T,>({
         `${URL_API_SERVER}${url}`,
         {
           params,
+          withCredentials: true,
         },
       );
       const responseData = response.data.data;
@@ -101,6 +102,9 @@ export const useFetchById = <T,>(url: string, id: string) => {
     try {
       const response = await axios.get<IResponseAxios<T>>(
         `${URL_API_SERVER}${url}/${id}`,
+        {
+          withCredentials: true,
+        },
       );
       const data = response.data.data as T;
 
