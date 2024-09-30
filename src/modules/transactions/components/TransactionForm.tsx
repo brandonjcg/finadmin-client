@@ -49,18 +49,13 @@ export const TransactionForm = () => {
       initialValues={values}
       onSubmit={async (values) => {
         try {
-          if (id)
-            return await axios.patch(`${url}transaction/${id}`, values, {
-              withCredentials: true,
-            });
+          if (id) return await axios.patch(`${url}transaction/${id}`, values);
 
-          await axios.post(`${url}transaction`, values, {
-            withCredentials: true,
-          });
+          await axios.post(`${url}transaction`, values);
         } catch (error) {
           buildError(error);
         } finally {
-          navigate('/transaction');
+          navigate('/transaction', { replace: true });
         }
       }}
     >
