@@ -13,13 +13,15 @@ export const GoogleOAuthSuccessRedirect = () => {
   useEffect(() => {
     const jwtUser = params.get('jwtUser');
     if (jwtUser) {
-      setCookie('jwt', jwtUser);
+      setCookie('jwt', jwtUser, {
+        sameSite: 'none',
+      });
       const userFromJwt: UserDef = jwtDecode(jwtUser);
       userFromJwt && setUser(userFromJwt);
     }
 
     navigate('/');
-  }, [navigate, params, setUser]);
+  }, [navigate, params, setCookie, setUser]);
 
   return <div>Logging in...</div>;
 };
