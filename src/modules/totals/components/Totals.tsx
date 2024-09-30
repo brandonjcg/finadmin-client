@@ -35,6 +35,7 @@ export const Totals = () => {
         `${URL_API_SERVER}transaction/bank/group`,
         {
           params,
+          withCredentials: true,
         },
       );
 
