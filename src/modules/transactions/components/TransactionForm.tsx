@@ -60,7 +60,7 @@ export const TransactionForm = () => {
         } catch (error) {
           buildError(error);
         } finally {
-          navigate('/transaction');
+          navigate('/transaction', { replace: true });
         }
       }}
     >
