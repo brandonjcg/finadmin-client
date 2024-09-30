@@ -16,6 +16,7 @@ export const GoogleOAuthSuccessRedirect = () => {
       setCookie('jwt', jwtUser, {
         sameSite: 'none',
         path: '/',
+        secure: true,
       });
       const userFromJwt: UserDef = jwtDecode(jwtUser);
       userFromJwt && setUser(userFromJwt);
