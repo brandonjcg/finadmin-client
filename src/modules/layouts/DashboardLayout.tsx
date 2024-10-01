@@ -1,7 +1,8 @@
+import { useContext } from 'react';
 import { Outlet } from 'react-router-dom';
 import { LoadingContext, LoadingPage, SidebarMenuItem, TODO } from '../core';
 import { routes } from '../router/routes';
-import { useContext } from 'react';
+import { LogoutButton } from '../auth';
 
 export const DashboardLayout = (): TODO => {
   const { loadingCount } = useContext(LoadingContext);
@@ -19,6 +20,7 @@ export const DashboardLayout = (): TODO => {
           .map((route) => (
             <SidebarMenuItem key={route.path} {...route} />
           ))}
+        <LogoutButton />
       </nav>
 
       <section className="mx-3 sm:mx-20 flex flex-col w-full h-[calc(100vh-50px)] bg-white bg-opacity-10 p-5 rounded-3xl overflow-auto">
