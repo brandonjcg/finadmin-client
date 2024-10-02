@@ -1,5 +1,4 @@
 import { useNavigate, useParams } from 'react-router-dom';
-import axios from 'axios';
 import { Formik, Form } from 'formik';
 import {
   ISelectOption,
@@ -11,19 +10,25 @@ import {
   CheckboxForm,
   DatepickerForm,
   buildError,
+  usePostData,
 } from '@/modules';
-
-const url = `${import.meta.env.VITE_API_SERVER_URL}`;
 
 type Params = {
   id: string;
 };
 
-const initialValues = {
-  bank: '',
+const initialValues: ITransaction = {
+  _id: '',
+  bank: {
+    _id: '',
+    name: '',
+    logo: '',
+    active: false,
+    createdAt: '',
+    updatedAt: '',
+  },
   concept: '',
   store: '',
-  amount: '',
   date: new Date().toLocaleDateString('en-US', {
     timeZone: 'America/Tijuana',
     day: '2-digit',
@@ -33,6 +38,11 @@ const initialValues = {
   isReserved: false,
   isPaid: false,
   additionalComments: '',
+  amount: 0,
+  active: false,
+  __v: 0,
+  createdAt: '',
+  updatedAt: '',
 };
 
 export const TransactionForm = () => {
@@ -42,23 +52,24 @@ export const TransactionForm = () => {
   const { data: banks } = useFetchData<ISelectOption>({ url: 'bank/select' });
 
   const values = fetchById || initialValues;
+  const postData = usePostData('transaction');
+  const patchData = usePostData(`transaction/${id}`, false);
+
+  const onSubmit = async (body: ITransaction) => {
+    try {
+      if (id) {
+        return patchData(body);
+      }
+      return postData(body);
+    } catch (error) {
+      buildError(error);
+    } finally {
+      navigate('/transaction', { replace: true });
+    }
+  };
 
   return (
-    <Formik
-      enableReinitialize
-      initialValues={values}
-      onSubmit={async (values) => {
-        try {
-          if (id) return await axios.patch(`${url}transaction/${id}`, values);
-
-          await axios.post(`${url}transaction`, values);
-        } catch (error) {
-          buildError(error);
-        } finally {
-          navigate('/transaction', { replace: true });
-        }
-      }}
-    >
+    <Formik enableReinitialize initialValues={values} onSubmit={onSubmit}>
       <Form className="space-y-4">
         <SelectForm rows={banks} name="bank" label="Bank" required />
         <InputForm name="concept" label="Concept" required />

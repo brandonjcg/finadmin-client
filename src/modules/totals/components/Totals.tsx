@@ -5,6 +5,7 @@ import {
   FiltersTransaction,
   IBankSelect,
   buildError,
+  useAuthState,
   useFetchData,
 } from '@/modules';
 import { TotalCard } from './TotalCard';
@@ -21,6 +22,7 @@ export const Totals = () => {
     'empty',
   );
   const haveChecked = checked.length;
+  const { token } = useAuthState();
 
   const handleSubmit = async () => {
     try {
@@ -35,6 +37,10 @@ export const Totals = () => {
         `${URL_API_SERVER}transaction/bank/group`,
         {
           params,
+          withCredentials: true,
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         },
       );
 

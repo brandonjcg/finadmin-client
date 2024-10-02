@@ -1,40 +1,31 @@
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
-export interface UserDef {
-  _id: string;
-  email: string;
-  fullName: string;
-  picture: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
 export interface AuthStateDef {
-  user: UserDef | null | string;
-  setUser: (data: UserDef) => void;
+  token: null | string;
+  setToken: (data: string) => void;
   removeUser: () => void;
 }
 
 export interface ZustandState {
   state: {
-    user: UserDef;
+    token: string | null;
   };
 }
 
 export const useAuthState = create(
   persist<AuthStateDef>(
     (set) => ({
-      user: null,
-      setUser: (user: UserDef) => {
-        set({ user });
+      token: null,
+      setToken: (token: string) => {
+        set({ token });
       },
       removeUser: () => {
-        set({ user: null });
+        set({ token: null });
       },
     }),
     {
-      name: 'user',
+      name: 'token',
       storage: createJSONStorage(() => localStorage),
     },
   ),
