@@ -14,10 +14,10 @@ export const buildError = <T>(error: Error | unknown) => {
 };
 
 export const hasAuthUser = () => {
-  const auth = localStorage.getItem('user') as string;
+  const auth = localStorage.getItem('token') as string;
   if (!auth) return null;
 
   const authJson = JSON.parse(auth) as ZustandState;
 
-  return authJson.state.user?._id || null;
+  return authJson.state.token || null;
 };
