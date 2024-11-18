@@ -97,7 +97,7 @@ export const Table = <T,>({
       columns={columns}
       paginationMode="server"
       rowCount={info.total}
-      pageSizeOptions={[10]}
+      pageSizeOptions={[10, 25, 50, 100]}
       paginationModel={{
         page: pagination.page,
         pageSize: pagination.pageSize,
